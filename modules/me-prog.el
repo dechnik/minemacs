@@ -361,6 +361,10 @@ the children of class at point."
 (use-package bnf-mode
   :straight t)
 
+(use-package nix-mode
+  :straight t
+  :mode "\\.nix\\'")
+
 (use-package ebnf-mode
   :straight (:host github :repo "jeramey/ebnf-mode")
   :hook (ebnf-mode . display-line-numbers-mode)
