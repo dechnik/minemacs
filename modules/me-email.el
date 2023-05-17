@@ -10,7 +10,8 @@
 
 (add-to-list 'auto-mode-alist '("\\.mailrc\\'" . conf-space-mode))
 
-(defconst +mu4e-load-path "/usr/share/emacs/site-lisp/mu4e/")
+;; (defconst +mu4e-load-path "/usr/share/emacs/site-lisp/mu4e/")
+(defconst +mu4e-load-path (getenv "MU4E_PATH"))
 
 (defgroup minemacs-mu4e nil
   "MinEmacs mu4e tweaks."
@@ -18,8 +19,8 @@
 
 (defconst +mu4e-available-p
   (and (executable-find "mu")
-       (executable-find "msmtp")
-       (executable-find "mbsync")
+       ;; (executable-find "msmtp")
+       ;; (executable-find "mbsync")
        (file-directory-p +mu4e-load-path)))
 
 (use-package mu4e
@@ -36,11 +37,11 @@
   (mu4e-search-results-limit 1000)
   (mu4e-index-cleanup t)
   (mu4e-attachment-dir "~/Downloads/mu4e-attachements/")
-  (mu4e-update-interval (* 1 60)) ;; Every 1 min
+  ;; (mu4e-update-interval (* 1 60)) ;; Every 1 min
   (mu4e-context-policy 'pick-first) ;; Start with the first context
   (mu4e-compose-context-policy 'ask) ;; Always ask which context to use when composing a new mail
   (mu4e-sent-messages-behavior 'sent) ;; Will be overwritten for Gmail accounts
-  (mu4e-get-mail-command "mbsync -a") ;; Use mbsync to get mails
+  ;; (mu4e-get-mail-command "mbsync -a") ;; Use mbsync to get mails
   (mu4e-index-update-error-warning nil) ;; Do not show warning after update
   (mu4e-hide-index-messages t) ;; Hide minibuffer messages after indexing
   (mu4e-change-filenames-when-moving t)
@@ -48,11 +49,11 @@
   (mu4e-main-hide-personal-addresses t) ;; Don't display a list of my own addresses!
   (mu4e-modeline-support nil) ;; `mu4e-alert' is much nicer.
   (mu4e-eldoc-support t)
-  (sendmail-program (executable-find "msmtp")) ;; Use msmtp to send mails
-  (send-mail-function #'smtpmail-send-it)
+  ;; (sendmail-program (executable-find "msmtp")) ;; Use msmtp to send mails
+  ;; (send-mail-function #'smtpmail-send-it)
   (message-sendmail-f-is-evil t)
-  (message-sendmail-extra-arguments '("--read-envelope-from"))
-  (message-send-mail-function #'message-send-mail-with-sendmail)
+  ;; (message-sendmail-extra-arguments '("--read-envelope-from"))
+  ;;(message-send-mail-function #'message-send-mail-with-sendmail)
   (message-sendmail-envelope-from 'obey-mail-envelope-from)
   (message-mail-user-agent 'mu4e-user-agent)
   (message-kill-buffer-on-exit t) ;; Close after sending

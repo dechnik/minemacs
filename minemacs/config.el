@@ -58,34 +58,12 @@
   ;; alias work  "Firstname Lastname <some.user.name@work.com>"
 
   ;; (setq mail-personal-alias-file (concat minemacs-config-dir "private/mail-aliases.mailrc"))
+  (when (file-exists-p "~/.local/share/mail/.emacs/contexts.el")
+    (load-file "~/.local/share/mail/.emacs/contexts.el"))
+  (setq mu4e-context-policy 'pick-first)
+  (when (file-exists-p "~/.local/share/mail/.emacs/send.el")
+    (load-file "~/.local/share/mail/.emacs/send.el")))
 
-  (setq +mu4e-auto-bcc-address "always.bcc@this.email" ;; Add an email address always included as BCC
-        +mu4e-gmail-accounts '(("account1@gmail.com" . "/gmail")
-                               ("account@somesite.org" . "/gmail")))
-
-  ;; Register email accounts with mu4e
-  ;; Use MinEmacs' `+mu4e-register-account' helper function to register multiple accounts
-  (+mu4e-register-account
-   "Google mail" ;; Account name
-   "gmail" ;; Maildir
-   `((user-mail-address     . "account1@gmail.com")
-     (mu4e-sent-folder      . "/gmail/Sent Mail")
-     (mu4e-drafts-folder    . "/gmail/Drafts")
-     (mu4e-trash-folder     . "/gmail/Trash")
-     ;; These settings aren't mandatory if a `msmtp' config is used.
-     (smtpmail-smtp-server  . "smtp.googlemail.com")
-     (smtpmail-smtp-service . 587)
-     ;; Define account aliases
-     (+mu4e-account-aliases . ("account1-alias@somesite.org"
-                               "account1-alias@othersite.org"))
-     ;; Org-msg greeting and signature
-     (org-msg-greeting-fmt  . "Hi%s,")
-     ;; Generate signature
-     (org-msg-signature     . ,(+org-msg-make-signature
-                                "Regards," ;; Closing phrase
-                                "Firstname" ;; First name
-                                "Lastname" ;; Last name
-                                "/R&D Engineer at Some company/")))))
 
 ;; Module: `me-org' -- Package: `org'
 (with-eval-after-load 'org
