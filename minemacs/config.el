@@ -9,6 +9,15 @@
 ;; Set the default GPG key ID, see "gpg --list-secret-keys"
 ;; (setq-default epa-file-encrypt-to '("XXXX"))
 
+(use-package pass
+  :straight t
+  :config
+  (auth-source-pass-enable))
+(use-package password-store
+  :straight t)
+(use-package password-store-otp
+  :straight t)
+
 (setq
  ;; Set a theme for MinEmacs, supported themes include these from `doom-themes'
  ;; and `modus-themes'.
