@@ -196,21 +196,3 @@
   :after (org-agenda)
   :init (let ((inhibit-message t))
           (org-super-agenda-mode)))
-
-;; Module: `me-notes' -- Package: `org-roam'
-(with-eval-after-load 'org-roam
-  (setq org-roam-directory "~/Roam/"
-        org-roam-db-location (concat org-roam-directory "org-roam.db"))
-
-  (setq org-roam-capture-templates
-   '(("d" "default" plain
-      "%?"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-      :unnarrowed t)))
-  ;; Register capture template (via Org-Protocol)
-  ;; Add this as bookmarklet in your browser
-  ;; javascript:location.href='org-protocol://roam-ref?template=r&ref=%27+encodeURIComponent(location.href)+%27&title=%27+encodeURIComponent(document.title)+%27&body=%27+encodeURIComponent(window.getSelection())
-  (setq org-roam-capture-ref-templates
-        '(("r" "ref" plain "%?"
-           :if-new (file+head "web/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+created: %U\n\n${body}\n")
-           :unnarrowed t))))

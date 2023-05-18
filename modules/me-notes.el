@@ -16,7 +16,16 @@
     "r" #'org-roam-ref-find
     "i" #'org-roam-node-insert
     "R" #'org-roam-node-random
-    "B" #'org-roam-buffer-display-dedicated))
+    "B" #'org-roam-buffer-display-dedicated)
+  :config
+  (org-roam-db-autosync-mode)
+  :custom
+  (org-roam-directory "~/Roam/")
+  (org-roam-capture-templates
+   '(("d" "default" plain
+      "%?"
+      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+      :unnarrowed t))))
 
 (use-package org-roam-protocol
   :after org-roam
