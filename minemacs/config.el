@@ -65,6 +65,25 @@
   ;; Load personal aliases, a file containing aliases, for example:
   ;; alias gmail "Firstname Lastname <some.user.name@gmail.com>"
   ;; alias work  "Firstname Lastname <some.user.name@work.com>"
+  (add-to-list 'mu4e-bookmarks
+               '(:name "Yesterday's messages" :query "date:2d..1d" :key ?y) t)
+
+  (setq mm-sign-option 'guided)
+
+  (defun sign-or-encrypt-message ()
+    (let ((answer (read-from-minibuffer "Sign or encrypt?\nEmpty to do nothing.\n[s/e]: ")))
+      (cond
+       ((string-equal answer "s") (progn
+                                    (message "Signing message.")
+                                    (mml-secure-message-sign-pgpmime)))
+       ((string-equal answer "e") (progn
+                                    (message "Encrypt and signing message.")
+                                    (mml-secure-message-encrypt-pgpmime)))
+       (t (progn
+            (message "Dont signing or encrypting message.")
+            nil)))))
+
+  (add-hook 'message-send-hook 'sign-or-encrypt-message)
 
   ;; (setq mail-personal-alias-file (concat minemacs-config-dir "private/mail-aliases.mailrc"))
   (when (file-exists-p "~/.local/share/mail/.emacs/contexts.el")
