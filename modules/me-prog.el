@@ -363,7 +363,9 @@ the children of class at point."
 
 (use-package nix-mode
   :straight t
-  :mode "\\.nix\\'")
+  :mode "\\.nix\\'"
+  :config
+  (+eglot-register 'nix-mode "rnix-lsp"))
 
 (use-package ebnf-mode
   :straight (:host github :repo "jeramey/ebnf-mode")
