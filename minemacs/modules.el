@@ -39,7 +39,7 @@
         me-notes         ; Notes & Zettelkasten (org-roam, consult-org-roam, ...)
         me-eaf           ; EAF apps (browser, jupyter, file-sender, ...)
         me-email      ; Email (mu4e, mu4e-alert, org-msg, ...)
-        ;; me-rss        ; News feed (elfeed, ...)
+        me-rss        ; News feed (elfeed, ...)
         ;; me-lifestyle  ; *Very* opinionated lifestyle packages (awqat, ...)
         me-docs          ; Documents (pdf-tools, nov, ...)
         me-latex         ; LaTeX (auctex, auctex-latexmk, reftex, bibtex, ...)
