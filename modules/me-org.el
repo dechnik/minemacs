@@ -338,6 +338,29 @@
           org-agenda)
   :config
   (require 'all-the-icons)
+  (defun +org--capture-local-root (path)
+    (let ((filename (file-name-nondirectory path)))
+      (expand-file-name
+       filename
+       (or (locate-dominating-file (file-truename default-directory)
+                                   filename)
+           (doom-modeline--project-root)
+           (user-error "Couldn't detect a project")))))
+  (defun +org-capture-project-todo-file ()
+    "Find the nearest `+org-capture-todo-file' in a parent directory, otherwise,
+      opens a blank one at the project root. Throws an error if not in a project."
+    (+org--capture-local-root +org-capture-todo-file))
+
+  (defun +org-capture-project-notes-file ()
+    "Find the nearest `+org-capture-notes-file' in a parent directory, otherwise,
+      opens a blank one at the project root. Throws an error if not in a project."
+    (+org--capture-local-root +org-capture-notes-file))
+
+  (defun +org-capture-project-changelog-file ()
+    "Find the nearest `+org-capture-changelog-file' in a parent directory,
+      otherwise, opens a blank one at the project root. Throws an error if not in a
+      project."
+    (+org--capture-local-root +org-capture-changelog-file))
   (defun org-capture-select-template-prettier (&optional keys)
     "Select a capture template, in a prettier way than default
                     Lisp programs can force the template by setting KEYS to a string."
@@ -470,6 +493,8 @@
 
   (defvar +org-capture-recipies  "~/Org/recipies.org")
   (defvar +org-capture-todo-file  "~/Org/todo.org")
+  (defvar +org-capture-notes-file  "~/Org/inbox.org")
+  (defvar +org-capture-changelog-file  "~/Org/changelog.org")
 
   (defun set-org-capture-templates ()
     (setq org-capture-templates
