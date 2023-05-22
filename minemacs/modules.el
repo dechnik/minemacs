@@ -43,7 +43,7 @@
         ;; me-lifestyle  ; *Very* opinionated lifestyle packages (awqat, ...)
         me-docs          ; Documents (pdf-tools, nov, ...)
         me-latex         ; LaTeX (auctex, auctex-latexmk, reftex, bibtex, ...)
-        ;; me-biblio     ; Bibliography & citations (org-cite, citar, zotxt, ...)
+        me-biblio     ; Bibliography & citations (org-cite, citar, zotxt, ...)
         me-natural-langs ; Natural language stuff (spell-fu, go-translate, eglot-ltex, ...)
         me-files         ; Files and directories (dirvish, treemacs, vlf, ...)
         me-tools         ; System tools (tramp, vterm, tldr, ssh-deploy, docker, ...)
