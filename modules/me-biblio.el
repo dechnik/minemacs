@@ -78,6 +78,7 @@
   :demand t
   :commands +org-roam-node-from-cite
   :config
+  (setq citar-bibliography '("~/Roam/biblio.bib"))
   ;; Modified form: jethrokuan.github.io/org-roam-guide/
   (defun +org-roam-node-from-cite (entry-key)
     (interactive (list (citar-select-ref)))
