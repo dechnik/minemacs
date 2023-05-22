@@ -21,6 +21,7 @@
   (org-roam-db-autosync-mode)
   :custom
   (org-roam-directory "~/Roam/")
+  (org-roam-node-display-template "${title} ${tags}")
   (org-roam-capture-templates
    '(("d" "default" plain
       "%?"
