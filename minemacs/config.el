@@ -10,16 +10,20 @@
 ;; (setq-default epa-file-encrypt-to '("XXXX"))
 
 (use-package password-store
-  :straight t)
+  :straight t
+  :demand t)
 (use-package password-store-otp
-  :straight t)
+  :straight t
+  :demand t)
 (use-package pass
   :straight t
+  :demand t
   :after password-store
   :config
   (auth-source-pass-enable))
 (use-package auth-source-pass
   :straight (:type built-in)
+  :demand t
   :init
   (auth-source-pass-enable)
   :after password-store)
