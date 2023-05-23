@@ -14,6 +14,7 @@
 
 (use-package org
   :straight (:type built-in)
+  :demand t
   :after minemacs-loaded
   :preface
   ;; Set to nil so we can detect user changes (in config.el)
@@ -236,6 +237,7 @@
 
 (use-package org-agenda
   :straight (:type built-in)
+  :demand t
   :custom
   (org-agenda-tags-column 0)
   (org-agenda-block-separator ?─)
@@ -259,7 +261,7 @@
 (use-package org-super-agenda
   :straight t
   :commands org-super-agenda-mode
-  :after (org-agenda)
+  :after org-agenda
   :init (let ((inhibit-message t))
           (org-super-agenda-mode))
   :config
