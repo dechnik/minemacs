@@ -48,6 +48,14 @@
   (lambda (node)
     (member tag-name (org-roam-node-tags node))))
 
+(defun my/set-org-agenda-files ()
+       '("~/Org/inbox.org"
+         "~/Org/agenda.org"
+         "~/Org/todo.org"
+         "~/Org/calendar-personal.org"
+         "~/Org/calendar-work.org"
+         "~/Org/projects.org"))
+
 (defun my/org-roam-list-notes-by-tag (tag-name)
   (mapcar #'org-roam-node-file
           (seq-filter
@@ -56,7 +64,7 @@
 
 (defun my/org-roam-refresh-agenda-list ()
   (interactive)
-  (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
+  (setq org-agenda-files (append (my/set-org-agenda-files) (my/org-roam-list-notes-by-tag "Project"))))
 
 ;; Build the agenda list the first time for the session
 (my/org-roam-refresh-agenda-list)

@@ -246,17 +246,7 @@
      (800 1000 1200 1400 1600 1800 2000)
      " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (org-agenda-current-time-string
-   "⭠ now ─────────────────────────────────────────────────")
-  :config
-  (setq org-agenda-files
-        (mapcar
-         (lambda (f) (concat org-directory f))
-         '("inbox.org"
-           "agenda.org"
-           "todo.org"
-           "calendar-personal.org"
-           "calendar-work.org"
-           "projects.org"))))
+   "⭠ now ─────────────────────────────────────────────────"))
 
 (use-package org-super-agenda
   :straight t
