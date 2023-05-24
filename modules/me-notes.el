@@ -92,7 +92,7 @@ capture was not aborted."
    (my/org-roam-filter-by-tag "Project")
    :templates
    '(("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+      :if-new (file+head "tasks/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
       :unnarrowed t))))
 
 (defun my/org-roam-capture-inbox ()
@@ -111,7 +111,7 @@ capture was not aborted."
                             nil
                             (my/org-roam-filter-by-tag "Project"))
                      :templates '(("p" "project" plain "** TODO %?"
-                                   :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                   :if-new (file+head+olp "tasks/%<%Y%m%d%H%M%S>-${slug}.org"
                                                           "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
                                                           ("Tasks"))))))
 
