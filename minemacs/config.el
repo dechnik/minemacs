@@ -29,6 +29,10 @@
   :after password-store)
 (setq auth-sources '(password-store "~/.authinfo.gpg"))
 
+(use-package robot-mode
+  :straight t
+  :mode (("\\.robot" . robot-mode)))
+
 (setq
  ;; Set a theme for MinEmacs, supported themes include these from `doom-themes'
  ;; and `modus-themes'.
