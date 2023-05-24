@@ -248,6 +248,28 @@
   (org-agenda-current-time-string
    "⭠ now ─────────────────────────────────────────────────"))
 
+(use-package org-caldav
+  :straight t
+  :after org
+  :init
+  (setq org-caldav-url "https://dav.dechnik.net/lukasz%40dechnik.net"
+        org-caldav-calendars
+        '((:calendar-id "Work"
+           :files ("~/Org/calendar-work.org")
+           :inbox "~/Org/calendar-work.org")
+          (:calendar-id "Personal"
+           :files ("~/Org/calendar-personal.org")
+           :inbox "~/Org/calendar-personal.org"))
+        org-caldav-sync-changes-to-org 'all
+        org-caldav-save-directory "~/Org"
+        org-icalendar-alarm-time 20
+        org-icalendar-use-deadline '(event-if-not-todo todo-due)
+        org-icalendar-use-scheduled '(event-if-not-todo)
+        org-icalendar-include-todo 'all
+        org-caldav-sync-todo t
+        org-icalendar-categories '(local-tags)
+        org-icalendar-timezone "Europe/Warsaw"))
+
 (use-package org-super-agenda
   :straight t
   :commands org-super-agenda-mode
