@@ -250,8 +250,9 @@
 
 (use-package org-caldav
   :straight t
-  :after org
-  :init
+  :after (org org-agenda)
+  :ensure t
+  :config
   (setq org-caldav-url "https://dav.dechnik.net/lukasz%40dechnik.net"
         org-caldav-calendars
         '((:calendar-id "Work"
