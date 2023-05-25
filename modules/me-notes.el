@@ -99,7 +99,7 @@ capture was not aborted."
   (interactive)
   (org-roam-capture- :node (org-roam-node-create)
                      :templates '(("i" "inbox" plain "* %?")
-                                  :if-new (file+head "Inbox.org" "#+title: Inbox\n"))))
+                                  :if-new (file+head "inbox.org" "#+title: Inbox\n"))))
 
 (defun my/org-roam-capture-task ()
   (interactive)
