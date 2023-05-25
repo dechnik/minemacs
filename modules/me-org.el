@@ -248,6 +248,11 @@
   (org-agenda-current-time-string
    "⭠ now ─────────────────────────────────────────────────"))
 
+(use-package citeproc
+  :straight t
+  :ensure t
+  :defer t)
+
 (use-package org-caldav
   :straight t
   :after (org org-agenda)
