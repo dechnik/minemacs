@@ -156,8 +156,7 @@
                              (condition-case nil
                                  ;; Android may raise permission-denied error
                                  (with-temp-buffer
-                                   (insert-file-contents
-                                    "/proc/sys/fs/pipe-max-size")
+                                   (insert-file-contents "/proc/sys/fs/pipe-max-size")
                                    (string-to-number (buffer-string)))
                                ;; If an error occured, fallback to the default value
                                (error read-process-output-max))
@@ -168,8 +167,6 @@
  frame-resize-pixelwise t
  ;; Stretch cursor to the glyph width
  x-stretch-cursor t
- ;; Show trailing whitespaces
- show-trailing-whitespace t
  ;; Resize window combinations proportionally
  window-combination-resize t
  ;; Enable time in the mode-line
@@ -285,16 +282,6 @@
  desktop-restore-eager 5
  ;; Avoid writing contents unchanged between auto-saves
  desktop-file-checksum t
-
- ;; ====== Compilation ======
- ;; Scroll compilation buffer
- compilation-scroll-output t ; 'first-error can be a good option
- ;; Always kill current compilation process before starting a new one
- compilation-always-kill t
- ;; Skip visited messages on compilation motion commands
- compilation-skip-visited t
- ;; Keep it readable
- compilation-window-height 12
 
  ;; ====== Misc ======
  ;; Set `webjump' sites to manily search engins
@@ -418,13 +405,18 @@ or file path may exist now."
 (add-hook 'conf-mode-hook #'visual-line-mode)
 (add-hook 'text-mode-hook #'visual-line-mode)
 
+;; Show trailing whitespace in `prog-mode' and `conf-mode'
+(defun +show-trailing-whitespace-h () (setq show-trailing-whitespace t))
+(add-hook 'prog-mode-hook #'+show-trailing-whitespace-h)
+(add-hook 'conf-mode-hook #'+show-trailing-whitespace-h)
+
 ;; When MinEmacs is running in an asynchronous Org export context, there is no
 ;; need to enable these modes. So we load them only if we haven't been launched
 ;; through the `me-org-export-async-init' file.
 ;; All modes and tweaks are enabled after MinEmacs is gets loaded
 (+deferred-unless! (featurep 'me-org-export-async-init)
   ;; Navigate windows using Shift+Direction
-  (windmove-default-keybindings)
+  (windmove-default-keybindings 'shift)
 
   ;; ====== Modes enabled globally ======
   ;; Show the battery status (if available) in the mode-line
