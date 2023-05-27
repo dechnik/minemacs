@@ -173,7 +173,7 @@
     "l" #'lexic-search-word-at-point
     "L" #'lexic-search)
   :config
-  (+map-local! :keymaps 'lexic-mode-map
+  (+nvmap! :keymaps 'lexic-mode-map
     "q" #'lexic-return-from-lexic
     "RET" #'lexic-search-word-at-point
     "a" #'outline-show-all
@@ -206,7 +206,7 @@
   :config
   (eglot-ltex-enable-handling-client-commands)
   (+eglot-register
-    '(text-mode org-mode markdown-mode rst-mode latex-mode bibtex-mode context-mode git-commit-mode)
+    '(text-mode org-mode markdown-mode rst-mode latex-mode tex-mode bibtex-mode context-mode git-commit-mode)
     '("ltex-ls" "--server-type=TcpSocket" "--port" :autoport)))
 
 

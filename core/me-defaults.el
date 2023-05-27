@@ -25,7 +25,7 @@
 ;; Use UTF-16-LE in Windows, see: rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows
 (set-selection-coding-system (if os/win 'utf-16-le 'utf-8))
 
-(setq
+(setopt
  ;; ====== Default directories for builtin packages ======
  abbrev-file-name (concat minemacs-local-dir "abbrev.el")
  auto-insert-directory (+directory-ensure minemacs-local-dir "auto-insert/")
@@ -136,18 +136,6 @@
  ;; Kill the shell buffer after exit
  shell-kill-buffer-on-exit t
 
- ;; ====== Passwords and encryption ======
- ;; Enable password caching
- password-cache t
- ;; One minute, default is 16
- password-cache-expiry 60
- ;; Default auth-sources to GPG
- auth-sources '("~/.authinfo.gpg")
- ;; Enable caching, do not keep asking about GPG key
- auth-source-do-cache t
- ;; All day, default is 2h (7200)
- auth-source-cache-expiry 86400
-
  ;; ====== Performances ======
  ;; Don’t compact font caches during GC
  inhibit-compacting-font-caches t
@@ -181,6 +169,11 @@
  tooltip-hide-delay 20
  ;; Use small frames to display tooltips instead of the default OS tooltips
  use-system-tooltips nil
+ ;; Animated images loop forever instead of playing the animation only once
+ image-animate-loop t
+ ;; Set line width for the divider in `window-divider-mode' to 2px
+ window-divider-default-bottom-width 2
+ window-divider-default-right-width 2
 
  ;; ====== Undo ======
  ;; 10MB (default is 160kB)
@@ -232,8 +225,18 @@
  scroll-conservatively 101
  ;; Scroll at a margin of one line
  scroll-margin 1
+ ;; The number of lines to scroll
+ scroll-step 1
+ ;; Columns from the window edge point allowed before horizontal scroll
+ hscroll-margin 2
+ ;; The number of columns to scroll
+ hscroll-step 1
  ;; Better scrolling on Emacs29+, specially on a touchpad
  pixel-scroll-precision-use-momentum t
+ ;; Make mouse scroll a little faster
+ mouse-wheel-scroll-amount  '(2 ((shift) . hscroll) ((meta) . nil) ((control meta) . global-text-scale) ((control) . text-scale))
+ ;; Make mouse scroll a little faster horizontally
+ mouse-wheel-scroll-amount-horizontal 2
 
  ;; ====== Recent files ======
  ;; Increase the maximum number of saved items
@@ -316,6 +319,8 @@
  indent-tabs-mode nil
  ;; Width for line numbers
  display-line-numbers-width 4
+ ;; Display absolute line numbers in narrowed regions
+ display-line-numbers-widen t
  ;; Small tab is enough!
  tab-width 2
  ;; Save buffer status
@@ -435,6 +440,9 @@ or file path may exist now."
 
   ;; Window layout undo/redo (`winner-undo' / `winner-redo')
   (winner-mode 1)
+
+  ;; Display divider between windows
+  (window-divider-mode 1)
 
   ;; Scroll pixel by pixel, in Emacs29+ there is a more pricise mode way to scroll
   (if (>= emacs-major-version 29)
