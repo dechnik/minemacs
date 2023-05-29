@@ -66,7 +66,7 @@
 (with-eval-after-load 'spell-fu
   ;; We can use MinEmacs' helper macro `+spell-fu-register-dictionaries'
   ;; to enable multi-language spell checking.
-  (+spell-fu-register-dictionaries "en" "pl"))
+  (+spell-fu-register-dictionaries! "en" "pl"))
 
 ;; Module: `me-rss' -- Package: `elfeed'
 (with-eval-after-load 'elfeed
