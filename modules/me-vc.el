@@ -39,25 +39,25 @@
 (use-package closql
   :straight t)
 
-;; (use-package forge
-;;   :straight t
-;;   :after magit
-;;   :demand t
-;;   :preface
-;;   ;; Keybindings will be overriten by `evil-collection'
-;;   (setq forge-add-default-bindings nil)
-;;   :init
-;;   (+map! :infix "g"
-;;     "f" '(nil :wk "forge")
-;;     "ff" #'forge-dispatch
-;;     "fc" #'forge-create-post
-;;     "fe" #'forge-edit-post
-;;     "ft" #'forge-edit-topic-title
-;;     "fs" #'forge-edit-topic-state
-;;     "fd" #'forge-edit-topic-draft)
-;;   :custom
-;;   (forge-database-connector (if (+emacs-features-p 'sqlite3) 'sqlite-builtin 'sqlite))
-;;   (forge-database-file (concat minemacs-local-dir "forge/database.sqlite")))
+(use-package forge
+  :straight t
+  :after magit
+  :demand t
+  :preface
+  ;; Keybindings will be overriten by `evil-collection'
+  (setq forge-add-default-bindings nil)
+  :init
+  (+map! :infix "g"
+    "f" '(nil :wk "forge")
+    "ff" #'forge-dispatch
+    "fc" #'forge-create-post
+    "fe" #'forge-edit-post
+    "ft" #'forge-edit-topic-title
+    "fs" #'forge-edit-topic-state
+    "fd" #'forge-edit-topic-draft)
+  :custom
+  (forge-database-connector (if (+emacs-features-p 'sqlite3) 'sqlite-builtin 'sqlite))
+  (forge-database-file (concat minemacs-local-dir "forge/database.sqlite")))
 
 (use-package emojify ;; Needed by `code-review'
   :straight t
@@ -70,22 +70,22 @@
   (when (< emacs-major-version 29)
     (+map! "ie" '(emojify-insert-emoji :wk "Emoji"))))
 
-;; (use-package code-review
-;;   :straight (:host github :repo "phelrine/code-review" :branch "fix/closql-update")
-;;   :after magit
-;;   :demand t
-;;   :custom
-;;   (code-review-download-dir (concat minemacs-cache-dir "code-review/"))
-;;   (code-review-db-database-file (concat minemacs-local-dir "code-review/database.sqlite"))
-;;   (code-review-log-file (concat minemacs-local-dir "code-review/code-review-error.log"))
-;;   (code-review-auth-login-marker 'forge) ; use the same credentials as forge in ~/.authinfo.gpg
-;;   :init
-;;   (with-eval-after-load 'magit
-;;     (transient-append-suffix 'magit-merge "i"
-;;       '("y" "Review pull-request" code-review-forge-pr-at-point)))
-;;   (with-eval-after-load 'forge
-;;     (transient-append-suffix 'forge-dispatch "c u"
-;;       '("c r" "review pull-request" code-review-forge-pr-at-point))))
+(use-package code-review
+  :straight (:host github :repo "phelrine/code-review" :branch "fix/closql-update")
+  :after magit
+  :demand t
+  :custom
+  (code-review-download-dir (concat minemacs-cache-dir "code-review/"))
+  (code-review-db-database-file (concat minemacs-local-dir "code-review/database.sqlite"))
+  (code-review-log-file (concat minemacs-local-dir "code-review/code-review-error.log"))
+  (code-review-auth-login-marker 'forge) ; use the same credentials as forge in ~/.authinfo.gpg
+  :init
+  (with-eval-after-load 'magit
+    (transient-append-suffix 'magit-merge "i"
+      '("y" "Review pull-request" code-review-forge-pr-at-point)))
+  (with-eval-after-load 'forge
+    (transient-append-suffix 'forge-dispatch "c u"
+      '("c r" "review pull-request" code-review-forge-pr-at-point))))
 
 (use-package diff-hl
   :straight t
