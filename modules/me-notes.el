@@ -12,6 +12,7 @@
   :straight t
   :demand t
   :after org-agenda
+  :hook (org-roam-mode . org-roam-db-autosync-enable)
   :init
   (+map! :infix "n"
     "f" #'org-roam-node-find
@@ -165,7 +166,7 @@ capture was not aborted."
 (use-package org-roam-ui
   :straight t
   :init
-  (+map! "nR" #'org-roam-ui-open))
+  (+map! "nu" #'org-roam-ui-open))
 
 (use-package consult-org-roam
   :straight t
