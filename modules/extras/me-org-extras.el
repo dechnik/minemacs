@@ -18,6 +18,13 @@
   :group 'minemacs-org
   :type '(cons natnum natnum))
 
+(defcustom +org-use-lower-case-keywords-and-properties t
+  "Automatically convert Org keywords and properties to lowercase on save."
+  :group 'minemacs-org
+  :type 'boolean)
+
+(put '+org-use-lower-case-keywords-and-properties 'safe-local-variable 'booleanp)
+
 (defvar-local +org-export-to-pdf-main-file nil
   "The main (entry point) Org file for a multi-files document.")
 
@@ -195,15 +202,50 @@ Example: \"#+TITLE\" -> \"#+title\"
   (with-eval-after-load 'ox-latex
     (dolist
         (class
-         '(("lettre"
-            "\\documentclass{lettre}"
+         '(;; Default classes with babel enabled
+           ("article"
+            "\\documentclass[11pt]{article}
+\\usepackage[AUTO]{babel}"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+            ("\\paragraph{%s}" . "\\paragraph*{%s}")
+            ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+           ("report"
+            "\\documentclass[11pt]{report}
+\\usepackage[AUTO]{babel}"
+            ("\\part{%s}" . "\\part*{%s}")
+            ("\\chapter{%s}" . "\\chapter*{%s}")
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+           ("book"
+            "\\documentclass[11pt]{book}
+\\usepackage[AUTO]{babel}"
+            ("\\part{%s}" . "\\part*{%s}")
+            ("\\chapter{%s}" . "\\chapter*{%s}")
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+           ;; Additional classes
+           ("blank"
+            "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]"
             ("\\section{%s}"       . "\\section*{%s}")
             ("\\subsection{%s}"    . "\\subsection*{%s}")
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
             ("\\paragraph{%s}"     . "\\paragraph*{%s}")
             ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))
-           ("blank"
-            "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]"
+           ("book-no-parts"
+            "\\documentclass[12pt,a4paper]{book}
+\\usepackage[AUTO]{babel}"
+            ("\\chapter{%s}"       . "\\chapter*{%s}")
+            ("\\section{%s}"       . "\\section*{%s}")
+            ("\\subsection{%s}"    . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+            ("\\paragraph{%s}"     . "\\paragraph*{%s}"))
+           ("lettre"
+            "\\documentclass{lettre}
+\\usepackage[AUTO]{babel}"
             ("\\section{%s}"       . "\\section*{%s}")
             ("\\subsection{%s}"    . "\\subsection*{%s}")
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -229,22 +271,10 @@ Example: \"#+TITLE\" -> \"#+title\"
             ("\\subsection{%s}"    . "\\subsection*{%s}")
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
             ("\\paragraph{%s}"     . "\\paragraph*{%s}")
-            ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))
-           ("thesis"
-            "\\documentclass[11pt]{book}"
-            ("\\chapter{%s}"       . "\\chapter*{%s}")
-            ("\\section{%s}"       . "\\section*{%s}")
-            ("\\subsection{%s}"    . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-            ("\\paragraph{%s}"     . "\\paragraph*{%s}"))
-           ("thesis-fr"
-            "\\documentclass[french,12pt,a4paper]{book}"
-            ("\\chapter{%s}"       . "\\chapter*{%s}")
-            ("\\section{%s}"       . "\\section*{%s}")
-            ("\\subsection{%s}"    . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-            ("\\paragraph{%s}"     . "\\paragraph*{%s}"))))
-      (add-to-list 'org-latex-classes class))))
+            ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))))
+      (if (assoc (car class) org-latex-classes)
+          (setcdr (assoc (car class) org-latex-classes) (cdr class))
+        (add-to-list 'org-latex-classes class)))))
 
 (defun +org-extras-outline-path-setup ()
   (advice-add
@@ -280,7 +310,7 @@ Example: \"#+TITLE\" -> \"#+title\"
   (add-hook
    'before-save-hook
    (defun +org--lower-case-keywords-and-properties-h ()
-     (when (derived-mode-p 'org-mode)
+     (when (and +org-use-lower-case-keywords-and-properties (derived-mode-p 'org-mode))
        (+org-lower-case-keywords-and-properties)))))
 
 (defun +org-extras-setup ()
