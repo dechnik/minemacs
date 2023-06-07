@@ -34,6 +34,19 @@
   (auth-source-do-cache t) ; Enable caching, do not keep asking about GPG key
   (auth-source-cache-expiry 86400)) ; All day, default is 2h (7200)
 
+(use-package epa-file
+  :straight (:type built-in)
+  :after minemacs-loaded
+  :demand t
+  :config
+  (+shutup! (epa-file-enable)))
+
+(use-package dired
+  :straight (:type built-in)
+  ;; Enable adding mail attachements from dired "C-c RET C-a" for
+  ;; `gnus-dired-attach'
+  :hook (dired-mode . turn-on-gnus-dired-mode))
+
 
 (provide 'me-builtin)
 

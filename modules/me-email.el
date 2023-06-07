@@ -152,12 +152,12 @@
            (seq (or (seq space "p" (zero-or-one (any ?- ?.)) "j" (any space ?: ?\; ?, ?.))))))) ;; p.j
   :config
   (+nvmap! :keymaps 'org-msg-edit-mode-map
-    "TAB" #'org-msg-tab
-    "gg"  #'org-msg-goto-body)
+    "gg" #'org-msg-goto-body)
   (+map-local! :keymaps 'org-msg-edit-mode-map
     "a"  '(nil :wk "attach")
     "aa" #'org-msg-attach-attach
     "ad" #'org-msg-attach-delete
+    "k"  #'org-msg-edit-kill-buffer
     "p"  #'org-msg-preview)
   (org-msg-mode 1))
 
@@ -166,7 +166,9 @@
   :after mu4e
   :demand t
   :custom
-  (mu4e-alert-icon "/usr/share/icons/Papirus/64x64/apps/mail-client.svg")
+  (mu4e-alert-icon
+   (let ((icon "/usr/share/icons/Papirus/64x64/apps/mail-client.svg"))
+     (when (file-exists-p icon) icon)))
   (mu4e-alert-set-window-urgency nil)
   (mu4e-alert-group-by :to)
   (mu4e-alert-email-notification-types '(subjects))
@@ -178,7 +180,7 @@
     :group 'minemacs-mu4e
     :type '(cons string string))
   :config
-  ;; Enable on mu4e notifications in doom-modeline
+  ;; Enable `mu4e' segment in `doom-modeline'
   (setq doom-modeline-mu4e t)
 
   ;; Ignore spams!
@@ -197,6 +199,7 @@
         name)))
 
   (defun +mu4e-alert-grouped-mail-notif-formatter (mail-group _all-mails)
+    "This function can be used for `mu4e-alert-grouped-mail-notification-formatter'."
     (when +mu4e-alert-bell-command
       (start-process "mu4e-alert-bell" nil (car +mu4e-alert-bell-command) (cdr +mu4e-alert-bell-command)))
     (let ((mail-count (length mail-group)))
