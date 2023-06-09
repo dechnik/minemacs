@@ -37,60 +37,60 @@
   (mu4e-search-results-limit 1000)
   (mu4e-index-cleanup t)
   (mu4e-attachment-dir "~/Downloads/mu4e-attachements/")
-  ;; (mu4e-update-interval (* 1 60)) ;; Every 1 min
-  (mu4e-context-policy 'pick-first) ;; Start with the first context
-  (mu4e-compose-context-policy 'ask) ;; Always ask which context to use when composing a new mail
-  (mu4e-sent-messages-behavior 'sent) ;; Will be overwritten for Gmail accounts
-  ;; (mu4e-get-mail-command "mbsync -a") ;; Use mbsync to get mails
-  (mu4e-index-update-error-warning nil) ;; Do not show warning after update
-  (mu4e-hide-index-messages t) ;; Hide minibuffer messages after indexing
+  ;; (mu4e-update-interval (* 1 60)) ; Every 1 min
+  (mu4e-context-policy 'pick-first) ; Start with the first context
+  (mu4e-compose-context-policy 'ask) ; Always ask which context to use when composing a new mail
+  (mu4e-compose-dont-reply-to-self t) ; When I reply to my own message, don't include me in the "To" field
+  (mu4e-sent-messages-behavior 'sent) ; Will be overwritten for Gmail accounts
+  ;; (mu4e-get-mail-command "mbsync -a") ; Use mbsync to get mails
+  (mu4e-index-update-error-warning nil) ; Do not show warning after update
+  (mu4e-hide-index-messages t) ; Hide minibuffer messages after indexing
   (mu4e-change-filenames-when-moving t)
-  (mu4e-completing-read-function #'completing-read) ;; Use `vertico' instead of `ido'
-  (mu4e-main-hide-personal-addresses t) ;; Don't display a list of my own addresses!
-  (mu4e-modeline-support nil) ;; `mu4e-alert' is much nicer.
-  (mu4e-eldoc-support t)
-  ;; (sendmail-program (executable-find "msmtp")) ;; Use msmtp to send mails
+  (mu4e-completing-read-function #'completing-read) ; Use `vertico' instead of `ido'
+  (mu4e-main-hide-personal-addresses t) ; Don't display a list of my own addresses!
+  (mu4e-modeline-support nil) ; `mu4e-alert' is much nicer.
+  (read-mail-command 'mu4e)
+  (message-kill-buffer-on-exit t) ; Close after sending
+  (message-mail-user-agent 'mu4e-user-agent)
+  ;; (sendmail-program (executable-find "msmtp")) ; Use msmtp to send mails
   ;; (send-mail-function #'smtpmail-send-it)
   (message-sendmail-f-is-evil t)
-  ;; (message-sendmail-extra-arguments '("--read-envelope-from"))
-  ;;(message-send-mail-function #'message-send-mail-with-sendmail)
+    ;; (message-sendmail-extra-arguments '("--read-envelope-from"))
+    ;;(message-send-mail-function #'message-send-mail-with-sendmail)
   (message-sendmail-envelope-from 'obey-mail-envelope-from)
-  (message-mail-user-agent 'mu4e-user-agent)
-  (message-kill-buffer-on-exit t) ;; Close after sending
   (mail-envelope-from 'header)
   (mail-specify-envelope-from t)
   (mail-user-agent 'mu4e-user-agent)
-  (read-mail-command 'mu4e)
   :config
   (+nvmap! :keymaps 'mu4e-view-mode-map
-    "p" #'mu4e-view-save-attachments)
+      "p" #'mu4e-view-save-attachments)
   (+nvmap! :keymaps '(mu4e-headers-mode-map mu4e-view-mode-map)
-    "gw" #'+mu4e-open-mail-as-html
-    "g RET" #'browse-url-at-point)
+      "gw" #'+mu4e-open-mail-as-html
+      "g RET" #'browse-url-at-point)
   (+map-local! :keymaps '(mu4e-compose-mode-map org-msg-edit-mode-map)
-    "s" #'message-send-and-exit
-    "d" #'message-kill-buffer
-    "S" #'message-dont-send)
+      "s" #'message-send-and-exit
+      "d" #'message-kill-buffer
+      "S" #'message-dont-send))
 
-  (defun +mu4e-open-mail-as-html ()
-    "Open the HTML mail in EAF Browser."
-    (interactive)
-    (if-let ((msg (mu4e-message-at-point t))
-             ;; Bind browse-url-browser-function locally, so it works
-             ;; even if EAF Browser is not set as a default browser.
-             (browse-url-browser-function
-              (cond
-               ((featurep 'me-eaf) #'eaf-open-browser)
-               (t #'browse-url-xdg-open))))
-        (mu4e-action-view-in-browser msg)
-      (message "No message at point.")))
+(defun +mu4e-open-mail-as-html ()
+  "Open the HTML mail in EAF Browser."
+  (interactive)
+  (if-let ((msg (mu4e-message-at-point t))
+           ;; Bind browse-url-browser-function locally, so it works
+           ;; even if EAF Browser is not set as a default browser.
+           (browse-url-browser-function
+            (cond
+             ((featurep 'me-eaf) #'eaf-open-browser)
+             (t #'browse-url-xdg-open))))
+      (mu4e-action-view-in-browser msg)
+    (message "No message at point.")))
 
   ;; Force running update and index in background
-  (advice-add
-   'mu4e-update-mail-and-index :around
-   (defun +mu4e--update-mail-quitely-a (origfn run-in-background)
-     (+info! "Getting new emails")
-     (apply origfn '(t)))))
+(advice-add
+ 'mu4e-update-mail-and-index :around
+ (defun +mu4e--update-mail-quitely-a (origfn run-in-background)
+   (+info! "Getting new emails")
+   (apply origfn '(t))))
 
 ;; Reply to iCalendar meeting requests
 (use-package mu4e-icalendar
