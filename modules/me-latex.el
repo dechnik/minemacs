@@ -19,11 +19,11 @@
   (TeX-auto-local ".auctex-auto") ; use hidden directories for AUCTeX files.
   (TeX-style-local ".auctex-style")
   (TeX-source-correlate-method 'synctex)
+  (TeX-electric-math '("$" . "$")) ; auto close inline equations
   (TeX-source-correlate-start-server nil) ; don't start the Emacs server when correlating sources.
   (TeX-electric-sub-and-superscript t) ; automatically insert braces after sub/superscript in `LaTeX-math-mode'.
   (TeX-save-query nil) ; just save, don't ask before each compilation.
   (TeX-engine 'xetex) ; use XeLaTeX by default
-  (TeX-PDF-mode t) ; export to PDF by default
   :init
   (+map-local! :keymaps '(tex-mode-map TeX-mode-map latex-mode-map LaTeX-mode-map)
     "c" #'TeX-command-run-all
@@ -32,37 +32,58 @@
     "v" #'TeX-view)
   :config
   (when (functionp 'pdf-tools-install)
-    (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))))
+    (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools")))
+
+  ;; To have the buffer refresh after compilation
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+
+  ;; Compile to PDF by default
+  (TeX-PDF-mode 1))
 
 (use-package latex
   :straight auctex
-  :config
+  :hook (latex-mode . latex-math-mode)
+  :custom
   ;; Add the TOC entry to the sectioning hooks.
-  (setq LaTeX-fill-break-at-separators nil
-        LaTeX-item-indent 0))
+  (LaTeX-fill-break-at-separators nil)
+  (LaTeX-item-indent 0)
+  (LaTeX-electric-left-right-brace t)
+  :config
+  ;; Set a correct indentation in a few additional environments
+  (add-to-list 'LaTeX-indent-environment-list '("lstlisting" current-indentation))
+  (add-to-list 'LaTeX-indent-environment-list '("tikzcd" LaTeX-indent-tabular))
+  (add-to-list 'LaTeX-indent-environment-list '("tikzpicture" current-indentation))
+
+  ;; Add a few macros and environment as verbatim
+  (add-to-list 'LaTeX-verbatim-environments "lstlisting")
+  (add-to-list 'LaTeX-verbatim-environments "Verbatim")
+  (add-to-list 'LaTeX-verbatim-macros-with-braces "lstinline")
+  (add-to-list 'LaTeX-verbatim-macros-with-delims "lstinline"))
 
 ;; Adapted from Doom Emacs
 (use-package auctex-latexmk
   :straight t
   :after latex
   :demand t
-  :hook (LaTeX-mode . +tex--set-latexmk-as-default-cmd-h)
-  :defines +tex--set-latexmk-as-default-cmd-h
   :custom
   (auctex-latexmk-inherit-TeX-PDF-mode t)
   :config
-  (setq-default
-   TeX-command-list
-   (cons
-    '("LatexMk-2" "latexmk -shell-escape %(-PDF)%S%(mode) %(file-line-error) %(extraopts) %t" TeX-run-latexmk nil
-      (plain-tex-mode latex-mode doctex-mode) :help "Run LatexMk with shell-escape")
-    TeX-command-list))
+  ;; Enable only if Latexmk is available
+  (when (executable-find "latexmk")
+    (setq-default
+     TeX-command-list
+     (cons
+      '("LatexMk-2" "latexmk -shell-escape %(-PDF)%S%(mode) %(file-line-error) %(extraopts) %t" TeX-run-latexmk nil
+        (plain-tex-mode latex-mode doctex-mode) :help "Run LatexMk with shell-escape")
+      TeX-command-list))
 
-  (defun +tex--set-latexmk-as-default-cmd-h ()
-    (setq TeX-command-default "LatexMk-2"))
+    (add-hook
+     'LaTeX-mode-hook
+     (defun +tex--set-latexmk-as-default-cmd-h ()
+       (setq TeX-command-default "LatexMk-2")))
 
-  ;; Add LatexMk as a TeX target.
-  (auctex-latexmk-setup))
+    ;; Add LatexMk as a TeX target.
+    (auctex-latexmk-setup)))
 
 (use-package bibtex
   :straight (:type built-in)
@@ -100,7 +121,7 @@
   :config
   (+map-local! :keymaps 'reftex-mode-map
     ";" 'reftex-toc)
-  (+nvmap! :keymaps 'reflex-toc-mode-map
+  (+nvmap! :keymaps 'reftex-toc-mode-map
     "j"   #'next-line
     "k"   #'previous-line
     "q"   #'kill-buffer-and-window

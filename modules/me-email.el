@@ -26,12 +26,16 @@
 (use-package mu4e
   :when +mu4e-available-p
   :load-path +mu4e-load-path
-  :commands mu4e-compose-new mu4e--start mu4e
+  :commands mu4e-compose-new mu4e--start
   :hook (mu4e-headers-mode . (lambda ()
                                (visual-line-mode -1)
                                (display-line-numbers-mode -1)))
   :init
   (+map! "om" #'mu4e)
+  (defcustom +mu4e-auto-start t
+    "Automatically start `mu4e' in background in `me-daemon'."
+    :group 'minemacs-mu4e
+    :type 'boolean)
   :custom
   (mu4e-confirm-quit t)
   (mu4e-search-results-limit 1000)
@@ -160,6 +164,18 @@
     "k"  #'org-msg-edit-kill-buffer
     "p"  #'org-msg-preview)
   (org-msg-mode 1))
+
+(use-package org-mime
+  :straight t
+  :after mu4e org
+  :demand t
+  :config
+  ;; Do not export table of contents nor author name
+  (setq org-mime-export-options
+        '(:with-latex dvipng
+          :section-numbers t
+          :with-author nil
+          :with-toc nil)))
 
 (use-package mu4e-alert
   :straight t

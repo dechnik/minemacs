@@ -42,6 +42,8 @@ Useful for keeping track of the enabled theme."
 
 (use-package nerd-icons
   :straight t
+  :init
+  (+register-build-function! nerd-icons-install-fonts)
   :config
   ;; Show .m files as matlab/octave files (integral icon)
   (setcdr (assoc "m" nerd-icons-extension-icon-alist)
@@ -85,6 +87,9 @@ Useful for keeping track of the enabled theme."
   (doom-modeline-bar-width 8)
   (doom-modeline-buffer-encoding 'nondefault)
   (doom-modeline-unicode-fallback t)
+  (doom-modeline-enable-word-count t)
+  (doom-modeline-continuous-word-count-modes
+   '(markdown-mode gfm-mode org-mode rst-mode latex-mode tex-mode text-mode))
   :config
   ;; HACK: Add some padding to the right
   (doom-modeline-def-modeline 'main

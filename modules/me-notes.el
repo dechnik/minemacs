@@ -28,15 +28,16 @@
     "B" #'org-roam-buffer-display-dedicated)
   :config
   (require 'org-roam-dailies)
-  (org-roam-db-autosync-mode)
+  (org-roam-db-autosync-mode 1)
   :custom
+  (org-roam-node-display-template (concat "${title:*} " (propertize "${tags:20}" 'face 'org-tag)))
   (org-roam-directory "~/Roam/")
   (org-roam-node-display-template "${title} ${tags}")
   (org-roam-capture-templates
-   '(("d" "default" plain
-      "%?"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-      :unnarrowed t))))
+       '(("d" "default" plain
+              "%?"
+              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+              :unnarrowed t))))
 
 (defun org-roam-node-insert-immediate (arg &rest args)
   (interactive "P")

@@ -33,18 +33,22 @@
 (use-package hideif
   :straight (:type built-in)
   :init
-  ;; If `me-lsp' is enabled, `lsp-semantic-tokens-mode' should do a better job,
-  ;; so we don't enable `hide-ifdef-mode'.
-  (unless (memq 'me-lsp minemacs-modules)
-    (dolist (h '(c++-mode-hook c++-ts-mode-hook c-mode-hook c-ts-mode-hook cuda-mode-hook))
-      (add-hook h #'hide-ifdef-mode)))
+  (defun +hide-ifdef-mode-maybe-h ()
+    ;; If `me-lsp' is enabled, `lsp-semantic-tokens-mode' should do a better job,
+    ;; so we don't enable `hide-ifdef-mode'.
+    (unless (or (bound-and-true-p lsp-semantic-tokens-mode)
+                (bound-and-true-p lsp-semantic-tokens-enable))
+      (hide-ifdef-mode 1)))
+
+  (dolist (mode '(c++-mode c++-ts-mode c-mode c-ts-mode cuda-mode opencl-mode))
+    ;; Hook to the end
+    (add-hook (intern (format "%s-hook" mode)) #'+hide-ifdef-mode-maybe-h 101))
   :custom
   (hide-ifdef-shadow t)
   (hide-ifdef-initially t))
 
 (use-package eglot
   :straight `(:type ,(if (< emacs-major-version 29) 'git 'built-in))
-  :commands +eglot-auto-enable
   :hook (eglot-managed-mode . eglot-inlay-hints-mode)
   :custom
   (eglot-autoshutdown t) ; shutdown after closing the last managed buffer
@@ -66,7 +70,6 @@
     "Modes for which Eglot can be automatically enabled by `+eglot-auto-enable'."
     :group 'minemacs-prog
     :type '(repeat symbol))
-  :config
   (defun +eglot-auto-enable ()
     "Auto-enable Eglot in configured modes in `+eglot-auto-enable-modes'."
     (interactive)
@@ -74,7 +77,19 @@
       (let ((hook (intern (format "%s-hook" mode))))
         (add-hook hook #'eglot-ensure)
         (remove-hook hook #'lsp-deferred))))
-
+  :config
+  ;; Modified from Crafted Emacs, pass `eglot-server-programs' to this function
+  ;; to fill `+eglot-auto-enable-modes' with all supported modes.
+  (defun +eglot-use-on-all-supported-modes (mode-list)
+    (dolist (mode-def mode-list)
+      (let ((mode (if (listp mode-def) (car mode-def) mode-def)))
+        (cond
+         ((listp mode) (+eglot-use-on-all-supported-modes mode))
+         (t
+          (when (and (not (eq 'clojure-mode mode)) ; prefer cider
+                     (not (eq 'lisp-mode mode))    ; prefer sly
+                     (not (eq 'scheme-mode mode))) ; prefer geiser
+            (add-to-list '+eglot-auto-enable-modes mode)))))))
   (+map! :keymaps 'eglot-mode-map
     :infix "c"
     "fF" #'eglot-format-buffer
@@ -148,7 +163,8 @@ the children of class at point."
   :config
   ;; Provide `consult-lsp' functionality from `consult-eglot', useful for
   ;; packages that relays on `consult-lsp' (like `dirvish-subtree').
-  (unless (memq 'me-lsp minemacs-modules)
+  (unless (or (memq 'me-lsp minemacs-modules)
+              (fboundp 'consult-lsp-file-symbols))
     (defalias 'consult-lsp-file-symbols #'consult-eglot-symbols)))
 
 (use-package eldoc

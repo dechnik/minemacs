@@ -26,10 +26,20 @@
    :variable-pitch-font-size 16))
 
 (+deferred!
- ;; Auto enable Eglot in supported modes using `+eglot-auto-enable' (from the
- ;; `me-prog' module). You can use `+lsp-auto-enable' instead to automatically
- ;; enable LSP mode in supported modes (from the `me-lsp' module).
- (+eglot-auto-enable))
+ ;; Auto enable Eglot in modes `+eglot-auto-enable-modes' using
+ ;; `+eglot-auto-enable' (from the `me-prog' module). You can use
+ ;; `+lsp-auto-enable' instead to automatically enable LSP mode in supported
+ ;; modes (from the `me-lsp' module).
+ (+eglot-auto-enable)
+
+ ;; Add `ocaml-mode' to `eglot' auto-enable modes
+ (add-to-list '+eglot-auto-enable-modes 'ocaml-mode)
+
+ (with-eval-after-load 'eglot
+   ;; You can use this to fill `+eglot-auto-enable-modes' with all supported
+   ;; modes from `eglot-server-programs'
+   (+eglot-use-on-all-supported-modes eglot-server-programs)))
+
 
 ;; If you installed Emacs from source, you can add the source code
 ;; directory to enable jumping to symbols defined in Emacs' C code.
@@ -63,9 +73,7 @@
 
   ;; (setq mail-personal-alias-file (concat minemacs-config-dir "private/mail-aliases.mailrc"))
 
-  (setq +mu4e-auto-bcc-address "always.bcc@this.email" ;; Add an email address always included as BCC
-        +mu4e-gmail-accounts '(("account1@gmail.com" . "/gmail")
-                               ("account@somesite.org" . "/gmail")))
+  (setq +mu4e-auto-bcc-address "always.bcc@this.email") ;; Add an email address always included as BCC
 
   ;; Register email accounts with mu4e
   ;; Use MinEmacs' `+mu4e-register-account' helper function to register multiple accounts
@@ -89,7 +97,9 @@
                                 "Regards," ;; Closing phrase
                                 "Firstname" ;; First name
                                 "Lastname" ;; Last name
-                                "/R&D Engineer at Some company/")))))
+                                "/R&D Engineer at Some company/")))
+   'default ;; Use it as default in a multi-accounts setting
+   'gmail)) ;; This is a Gmail account, store it and treat it accordingly (see `me-mu4e-gmail')
 
 ;; Module: `me-org' -- Package: `org'
 (with-eval-after-load 'org

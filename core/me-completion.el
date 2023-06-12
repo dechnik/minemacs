@@ -14,11 +14,19 @@
   :demand t
   :config
   (dolist (fn '(cape-file cape-elisp-block cape-keyword cape-symbol))
-    (add-to-list 'completion-at-point-functions fn)))
+    (add-hook 'completion-at-point-functions fn))
+
+  ;; Silence the pcomplete capf, no errors or messages! Important for corfu!
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+
+  (when (< emacs-major-version 29)
+    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)))
 
 (use-package corfu
   :straight t
   :hook (minemacs-after-startup . global-corfu-mode)
+  :hook (eshell-mode . +corfu-less-intrusive-h)
+  :hook (minibuffer-setup . +corfu-enable-in-minibuffer-h)
   :init
   (add-to-list
    'load-path
@@ -30,16 +38,20 @@
   (corfu-auto-delay 0.2)
   :config
   (with-eval-after-load 'evil
-    (define-key corfu-map (kbd "C-j") #'corfu-next)
-    (define-key corfu-map (kbd "C-k") #'corfu-previous))
+    (keymap-set corfu-map "C-j" 'corfu-next)
+    (keymap-set corfu-map "C-k" 'corfu-previous))
 
-  (defun +corfu-enable-in-minibuffer ()
+  (defun +corfu-enable-in-minibuffer-h ()
     "Enable Corfu in the minibuffer if `completion-at-point' is bound."
     (when (where-is-internal #'completion-at-point (list (current-local-map)))
       (setq-local corfu-auto nil) ; Enable/disable auto completion
       (corfu-mode 1)))
 
-  (add-hook 'minibuffer-setup-hook #'+corfu-enable-in-minibuffer))
+  (defun +corfu-less-intrusive ()
+    (setq-local corfu-quit-at-boundary t
+                corfu-quit-no-match t
+                corfu-auto nil)
+    (corfu-mode 1)))
 
 (use-package corfu-popupinfo
   :hook (corfu-mode . corfu-popupinfo-mode)
@@ -47,9 +59,9 @@
   (corfu-popupinfo-delay 0.1)
   (corfu-popupinfo-max-height 15)
   :config
-  (define-key corfu-map (kbd "M-p") #'corfu-popupinfo-scroll-down)
-  (define-key corfu-map (kbd "M-n") #'corfu-popupinfo-scroll-up)
-  (define-key corfu-map (kbd "M-d") #'corfu-popupinfo-toggle))
+  (keymap-set corfu-map "M-p" 'corfu-popupinfo-scroll-down)
+  (keymap-set corfu-map "M-n" 'corfu-popupinfo-scroll-up)
+  (keymap-set corfu-map "M-d" 'corfu-popupinfo-toggle))
 
 (use-package corfu-history
   :hook (corfu-mode . corfu-history-mode)
@@ -88,9 +100,9 @@
   ;; Better formatting for `view-register'
   (register-preview-function #'consult-register-format)
   :init
-  (define-key minibuffer-local-map (kbd "C-r") #'consult-history)
-  (define-key minibuffer-local-map (kbd "S-C-v") #'consult-yank-pop)
-  (global-set-key (kbd "C-s") #'consult-line)
+  (keymap-set minibuffer-local-map "C-r"   'consult-history)
+  (keymap-set minibuffer-local-map "C-S-v" 'consult-yank-pop)
+  (keymap-global-set "C-s" 'consult-line)
   (+map!
     ;; buffer
     "bl"  #'consult-line
@@ -169,14 +181,15 @@
 (use-package embark
   :straight t
   :init
-  (global-set-key [remap describe-bindings] #'embark-bindings)
+  (keymap-global-set "<remap> <describe-bindings>" #'embark-bindings)
+  ;; Use Embark to show bindings in a key prefix with `C-h`
   (setq prefix-help-command #'embark-prefix-help-command)
-  (+map! "." #'embark-act))
+  (+map! "a" #'embark-act))
 
 (use-package embark-consult
   :straight t
   :after embark consult
-  :demand t)
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package marginalia
   :straight t
@@ -184,7 +197,7 @@
 
 (use-package nerd-icons-completion
   :straight t
-  :hook (marginalia-mode . nerd-icons-completion-mode))
+  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup))
 
 (use-package orderless
   :straight t
@@ -209,23 +222,23 @@
   ;; In the minibuffer, "C-k" is be mapped to act like "<up>". However, in
   ;; Emacs, "C-k" have a special meaning of `kill-line'. So lets map "C-S-k"
   ;; to serve the original "C-k".
-  (define-key minibuffer-local-map (kbd "C-S-k") #'kill-line)
+  (keymap-set minibuffer-local-map "C-S-k" 'kill-line)
   :config
   (with-eval-after-load 'evil
-    (define-key vertico-map (kbd "C-j") #'vertico-next)
-    (define-key vertico-map (kbd "C-k") #'vertico-previous)))
+    (keymap-set vertico-map "C-j" 'vertico-next)
+    (keymap-set vertico-map "C-k" 'vertico-previous)))
 
 (use-package vertico-directory
   :after vertico
   :demand t
   :config
-  (define-key vertico-map "\r" #'vertico-directory-enter)
-  (define-key vertico-map "\d" #'vertico-directory-delete-char)
-  (define-key vertico-map "\M-\d" #'vertico-directory-delete-word)
+  (keymap-set vertico-map "RET"   'vertico-directory-enter)
+  (keymap-set vertico-map "DEL"   'vertico-directory-delete-char)
+  (keymap-set vertico-map "M-DEL" 'vertico-directory-delete-word)
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
   (with-eval-after-load 'evil
-    (define-key vertico-map (kbd "M-h") #'vertico-directory-up)))
+    (keymap-set vertico-map "M-h" 'vertico-directory-up)))
 
 (use-package vertico-repeat
   :hook (minibuffer-setup . vertico-repeat-save)

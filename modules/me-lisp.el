@@ -84,6 +84,11 @@
 (use-package racket-mode
   :straight t)
 
+(use-package scheme
+  :straight (:type built-in)
+  :custom
+  (scheme-program-name "guile"))
+
 (use-package geiser
   :straight t
   :custom
@@ -92,31 +97,13 @@
 (use-package geiser-chez
   :straight t)
 
-(use-package geiser-chibi
-  :straight t)
-
-(use-package geiser-chicken
-  :straight t)
-
-(use-package geiser-gambit
-  :straight t)
-
-(use-package geiser-gauche
-  :straight t)
-
 (use-package geiser-guile
-  :straight t)
-
-(use-package geiser-kawa
   :straight t)
 
 (use-package geiser-mit
   :straight t)
 
 (use-package geiser-racket
-  :straight t)
-
-(use-package geiser-stklos
   :straight t)
 
 ;; Clojure

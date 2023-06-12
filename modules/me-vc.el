@@ -34,7 +34,11 @@
   (magit-todos-mode 1))
 
 (use-package magit-imerge
-  :straight t)
+  :straight t
+  :init
+  (with-eval-after-load 'magit
+    (transient-append-suffix 'magit-merge "m"
+      '("M" "magit-imerge" magit-imerge))))
 
 (use-package closql
   :straight t)
@@ -42,7 +46,6 @@
 (use-package forge
   :straight t
   :after magit
-  :demand t
   :preface
   ;; Keybindings will be overriten by `evil-collection'
   (setq forge-add-default-bindings nil)
@@ -56,8 +59,10 @@
     "fs" #'forge-edit-topic-state
     "fd" #'forge-edit-topic-draft)
   :custom
-  (forge-database-connector (if (+emacs-features-p 'sqlite3) 'sqlite-builtin 'sqlite))
-  (forge-database-file (concat minemacs-local-dir "forge/database.sqlite")))
+  (forge-database-file (concat minemacs-local-dir "forge/database.sqlite"))
+  :config
+  (transient-append-suffix 'forge-dispatch "M"
+    '("m" "forge merge (via API)" forge-merge)))
 
 (use-package emojify ;; Needed by `code-review'
   :straight t
@@ -73,7 +78,6 @@
 (use-package code-review
   :straight (:host github :repo "phelrine/code-review" :branch "fix/closql-update")
   :after magit
-  :demand t
   :custom
   (code-review-download-dir (concat minemacs-cache-dir "code-review/"))
   (code-review-db-database-file (concat minemacs-local-dir "code-review/database.sqlite"))
