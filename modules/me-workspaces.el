@@ -15,10 +15,11 @@
 
 (use-package tabspaces
   :straight t
-  :hook (minemacs-after-startup . tabspaces-mode)
+  :after minemacs-loaded
   :hook (tabspaces-mode . +consult-tabspaces-setup)
   :custom
   (tabspaces-use-filtered-buffers-as-default t)
+  (tabspaces-default-tab "*default*")
   (tabspaces-include-buffers '("*scratch*"))
   (tabspaces-session t)
   (tabspaces-session-file (+directory-ensure minemacs-local-dir "tabspaces/session.el"))
@@ -69,7 +70,21 @@
                :sort      'visibility
                :as        #'buffer-name))))
 
-    (add-to-list 'consult-buffer-sources '+consult--source-workspace)))
+    (add-to-list 'consult-buffer-sources '+consult--source-workspace))
+
+  ;; Switch to the scratch buffer after creating a new workspace
+  (advice-add
+   'tabspaces-switch-or-create-workspace :around
+   (defun +tabspaces--switch-to-scratch-after-create-a (origfn &rest workspace)
+     (let ((length-before (length (tabspaces--list-tabspaces))))
+       (apply origfn workspace)
+       (when (length> (tabspaces--list-tabspaces) length-before)
+         (switch-to-buffer (get-scratch-buffer-create))))))
+
+  (tabspaces-mode 1)
+
+  ;; Rename the first tab to `tabspaces-default-tab'
+  (tab-bar-rename-tab tabspaces-default-tab))
 
 (use-package tab-bar
   :straight (:type built-in)

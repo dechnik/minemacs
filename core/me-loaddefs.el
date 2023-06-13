@@ -397,6 +397,41 @@ Hook BODY in HOOK, it runs only once.
 
 (fn HOOK &rest BODY)" nil t)
 (function-put '+hook-once! 'lisp-indent-function 1)
+(autoload '+add-hook! "../elisp/+minemacs" "\
+A convenience macro for adding N functions to M hooks.
+
+This macro accepts, in order:
+
+  1. The mode(s) or hook(s) to add to. This is either an unquoted mode, an
+     unquoted list of modes, a quoted hook variable or a quoted list of hook
+     variables.
+  2. Optional properties :local, :append, and/or :depth [N], which will make the
+     hook buffer-local or append to the list of hooks (respectively),
+  3. The function(s) to be added: this can be a quoted function, a quoted list
+     thereof, a list of `defun' or `cl-defun' forms, or arbitrary forms (will
+     implicitly be wrapped in a lambda).
+
+(fn HOOKS [:append :local [:depth N]] FUNCTIONS-OR-FORMS...)" nil t)
+(function-put '+add-hook! 'lisp-indent-function '(lambda (indent-point state) (goto-char indent-point) (when (looking-at-p "\\s-*(") (lisp-indent-defform state indent-point))))
+(autoload '+remove-hook! "../elisp/+minemacs" "\
+A convenience macro for removing N functions from M hooks.
+
+Takes the same arguments as `add-hook!'.
+
+If N and M = 1, there's no benefit to using this macro over `remove-hook'.
+
+(fn HOOKS [:append :local] FUNCTIONS)" nil t)
+(function-put '+remove-hook! 'lisp-indent-function 'defun)
+(autoload '+setq-hook! "../elisp/+minemacs" "\
+Sets buffer-local variables on HOOKS.
+
+(fn HOOKS &rest [SYM VAL]...)" nil t)
+(function-put '+setq-hook! 'lisp-indent-function 1)
+(autoload '+unsetq-hook! "../elisp/+minemacs" "\
+Unbind setq hooks on HOOKS for VARS.
+
+(fn HOOKS &rest [SYM VAL]...)" nil t)
+(function-put '+unsetq-hook! 'lisp-indent-function 1)
 (autoload '+compile-functions "../elisp/+minemacs" "\
 Queue FNS to be byte/natively-compiled after a brief delay.
 
@@ -421,7 +456,7 @@ Run all build functions registered with `+register-build-function!'.
 (fn &optional DONT-ASK-P)" t)
 (autoload 'minemacs-update "../elisp/+minemacs" "\
 Update MinEmacs packages." t)
-(register-definition-prefixes "../elisp/+minemacs" '("+eval-when-idle-" "+hook-once-num" "minemacs--build-functions"))
+(register-definition-prefixes "../elisp/+minemacs" '("+eval-when-idle-" "+hook-once-num" "+resolve-hook-forms" "+setq-hook-fns" "minemacs--build-functions"))
 
 
 ;;; Generated autoloads from ../elisp/+primitives.el
@@ -628,6 +663,8 @@ This will overwrite the built-in \"gdb-mi\" for this session." t)
 
 ;;; Generated autoloads from ../modules/extras/me-mu4e-extras.el
 
+(autoload '+mu4e "../modules/extras/me-mu4e-extras" "\
+Start `mu4e' in a dedicated workspace using `tabspaces' or `tab-bar'." t)
 (autoload '+mu4e-extras-setup "../modules/extras/me-mu4e-extras")
 (register-definition-prefixes "../modules/extras/me-mu4e-extras" '("+mu4e-" "+org-msg-make-signature"))
 
