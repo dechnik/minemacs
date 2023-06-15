@@ -123,7 +123,7 @@
   :after mu4e
   :demand t
   :init
-  (+map! "om" #'+mu4e)
+  (+map! "om" (+def-dedicated-tab! mu4e :exit-func mu4e-quit))
   :config
   ;; Enable MinEmacs's mu4e extra features, including:
   ;; - Auto BCC the `+mu4e-auto-bcc-address';
@@ -133,8 +133,6 @@
   ;; - Add an action to save all the attachements;
   ;; - Add an action to save the message at point.
   (+mu4e-extras-setup)
-  ;; Register an advice to remove the dedicated workspace after quitting `mu4e'
-  (+mu4e-close-workspace-when-stopped-setup)
   ;; Redefine bookmarks queries to ignore spams
   (+mu4e-extras-ignore-spams-in-bookmarks-setup))
 
@@ -166,7 +164,15 @@
     "ad" #'org-msg-attach-delete
     "k"  #'org-msg-edit-kill-buffer
     "p"  #'org-msg-preview)
-  (org-msg-mode 1))
+  (org-msg-mode 1)
+
+  ;; HACK: When adding multiple attachements, we likely need it to remember the
+  ;; directory of the last added attachement.
+  (advice-add
+   'org-msg-attach-attach :after
+   (defun +org-msg-attach-attach--save-default-directory-a (file &rest _)
+     (when-let ((dir (file-name-directory file)))
+       (setq-local default-directory dir)))))
 
 (use-package org-mime
   :straight t

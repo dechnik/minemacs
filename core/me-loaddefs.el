@@ -123,6 +123,14 @@ prefix or universal argument, it waits for a moment (defined by
 Return the region or the thing at point.")
 (autoload '+webjump "../elisp/+emacs" "\
 Like `webjump', with initial query filled from `+region-org-thing-at-point'." t)
+(autoload '+def-dedicated-tab! "../elisp/+emacs" "\
+Define +CMD command to run BODY in a dedicated tab.
+If not specified, BODY defaults to `(CMD)'.
+
+You can pass an exit hook or exit function on which, the created workspace will
+be deleted.
+
+(fn NAME [[:exit-hook HOOK] [:exit-func FUNC]] FORMS...)" nil t)
 (register-definition-prefixes "../elisp/+emacs" '("+dir-locals--autoreload-" "+screenshot-" "+webjump-read-string-"))
 
 
@@ -554,6 +562,67 @@ Invoke `gdb' in the project's root." t)
 (register-definition-prefixes "../elisp/+project" '("+project-scan-dir-paths"))
 
 
+;;; Generated autoloads from ../elisp/+scratch.el
+
+(autoload '+scratch-load-persistent-scratch-buffer "../elisp/+scratch" "\
+
+
+(fn &optional PROJECT-NAME)")
+(autoload '+scratch-buffer "../elisp/+scratch" "\
+Return a scratchpad buffer in major MODE.
+
+(fn &optional DONT-RESTORE-P MODE DIRECTORY PROJECT-NAME)")
+(autoload '+scratch-persist-buffer-h "../elisp/+scratch" "\
+Save the current buffer to `+scratch-dir'.
+
+(fn &rest _)")
+(autoload '+scratch-persist-buffers-h "../elisp/+scratch" "\
+Save all scratch buffers to `+scratch-dir'.
+
+(fn &rest _)")
+(autoload '+scratch-persist-buffers-after-switch-h "../elisp/+scratch" "\
+Kill scratch buffers when they are no longer visible, saving them to disk.
+
+(fn &rest _)")
+(unless noninteractive (add-hook 'kill-emacs-hook #'+scratch-persist-buffers-h))
+(autoload '+scratch-open-buffer "../elisp/+scratch" "\
+Pop up a persistent scratch buffer.
+
+If passed the prefix ARG, do not restore the last scratch buffer.
+If PROJECT-P is non-nil, open a persistent scratch buffer associated with the
+  current project.
+
+(fn &optional ARG PROJECT-P SAME-WINDOW-P)" t)
+(autoload '+switch-to-scratch-buffer "../elisp/+scratch" "\
+Like `+scratch-open-buffer', but switches to it in the current window.
+
+If passed the prefix ARG, do not restore the last scratch buffer.
+
+(fn &optional ARG PROJECT-P)" t)
+(autoload '+scratch-open-project-scratch-buffer "../elisp/+scratch" "\
+Opens the (persistent) project scratch buffer in a popup.
+
+If passed the prefix ARG, do not restore the last scratch buffer.
+
+(fn &optional ARG SAME-WINDOW-P)" t)
+(autoload '+scratch-switch-to-project-scratch-buffer "../elisp/+scratch" "\
+Like `+scratch-open-project-scratch-buffer', but switches to it in the current
+window.
+
+If passed the prefix ARG, do not restore the last scratch buffer.
+
+(fn &optional ARG)" t)
+(autoload '+scratch-revert-scratch-buffer "../elisp/+scratch" "\
+Revert scratch buffer to last persistent state." t)
+(autoload '+scratch-delete-persistent-scratch-file "../elisp/+scratch" "\
+Deletes a scratch buffer file in `+scratch-dir'.
+
+If prefix ARG, delete all persistent scratches.
+
+(fn &optional ARG)" t)
+(register-definition-prefixes "../elisp/+scratch" '("+scratch-"))
+
+
 ;;; Generated autoloads from ../elisp/+systemd.el
 
 (autoload '+systemd-running-p "../elisp/+systemd" "\
@@ -627,7 +696,7 @@ Fallback to FALLBACK-RELEASE when it can't get the last one.
 
 ;;; Generated autoloads from me-defaults.el
 
-(register-definition-prefixes "me-defaults" '("+show-trailing-whitespace-h" "+whitespace-auto-cleanup-modes"))
+(register-definition-prefixes "me-defaults" '("+whitespace-auto-cleanup-modes"))
 
 
 ;;; Generated autoloads from ../modules/extras/me-eglot-ltex.el
@@ -663,8 +732,6 @@ This will overwrite the built-in \"gdb-mi\" for this session." t)
 
 ;;; Generated autoloads from ../modules/extras/me-mu4e-extras.el
 
-(autoload '+mu4e "../modules/extras/me-mu4e-extras" "\
-Start `mu4e' in a dedicated workspace using `tabspaces' or `tab-bar'." t)
 (autoload '+mu4e-extras-setup "../modules/extras/me-mu4e-extras")
 (register-definition-prefixes "../modules/extras/me-mu4e-extras" '("+mu4e-" "+org-msg-make-signature"))
 

@@ -49,6 +49,8 @@
  eshell-rc-script (concat minemacs-local-dir "eshell/rc")
  eudc-options-file (concat minemacs-local-dir "eudc-options.el")
  eww-bookmarks-directory (+directory-ensure minemacs-local-dir "eww/bookmarks/")
+ fortune-dir (+directory-ensure minemacs-local-dir "fortune/")
+ fortune-file (expand-file-name "local" fortune-dir)
  gnus-dribble-directory (+directory-ensure minemacs-local-dir "gnus/dribble/")
  gnus-init-file (concat minemacs-config-dir "gnus/init.el")
  gnus-startup-file (concat minemacs-config-dir "gnus/newsrc")
@@ -137,6 +139,10 @@
  shell-kill-buffer-on-exit t
  ;; Revert non-file buffers like dired
  global-auto-revert-non-file-buffers t
+ ;; Don't prompt for confirmation when we create a new file or buffer
+ confirm-nonexistent-file-or-buffer nil
+ ;; More intuitive buffer naming style
+ uniquify-buffer-name-style 'forward
 
  ;; ====== Performances ======
  ;; Don’t compact font caches during GC
