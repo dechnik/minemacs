@@ -106,7 +106,7 @@
     "bu"  #'+sudo-save-buffer
     "bx"  #'bury-buffer
     "bS"  #'save-some-buffers
-    "bs"  #'scratch-buffer
+    "bs"  #'+scratch-open-project-scratch-buffer
     "bM"  #'view-echo-area-messages
     "bA"  #'+kill-some-buffers
     "bk"  `(,(+cmdfy! (kill-buffer (current-buffer)))
@@ -200,6 +200,13 @@
 
     ;; ====== Project ======
     "p"   '(nil :wk "project"))
+
+  ;; To handle repeated "SPC u" like repeated "C-u"
+  (general-def
+    :keymaps 'universal-argument-map
+    :prefix minemacs-leader-key
+    :global-prefix minemacs-global-mode-prefix
+    "u" #'universal-argument-more)
 
   ;; HACK: This is a synchronization feature, providing `me-general-ready' tells
   ;; the `+map!', `+map-local!', ... macros that `general' is ready and the

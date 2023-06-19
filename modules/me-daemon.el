@@ -9,8 +9,8 @@
 ;;; Code:
 
 ;; Email (mu4e)
-(+lazy-when! (memq 'me-email minemacs-modules)
-  (when (and +mu4e-auto-start +mu4e-available-p (require 'mu4e nil t))
+(+lazy-when! (and (memq 'me-email minemacs-modules) +mu4e-available-p)
+  (when (and +mu4e-auto-start (require 'mu4e nil t))
     (unless (mu4e-running-p)
       (+info! "Starting `mu4e' in background.")
       (let ((inhibit-message t))
@@ -39,12 +39,6 @@
  'server-after-make-frame-hook
  (defun +daemon--reload-theme-h ()
    (load-theme minemacs-theme t)))
-
-(+hook-once! 'server-after-make-frame-hook
-  (when (and (display-graphic-p)
-             (bound-and-true-p display-battery-mode))
-    (display-battery-mode -1)
-    (display-battery-mode 1)))
 
 
 (provide 'me-daemon)
