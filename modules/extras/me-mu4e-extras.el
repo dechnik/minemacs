@@ -14,9 +14,9 @@
   :type '(repeat string))
 
 (defcustom +mu4e-auto-bcc-address nil
-  "BCC address."
+  "Auto add this/these addresses as BCC."
   :group 'minemacs-mu4e
-  :type 'string)
+  :type '(choice string (repeat string)))
 
 ;; Some of these functions are adapted from Doom Emacs
 
@@ -27,7 +27,7 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
                              (lambda (part)
                                (when (assoc "attachment" (cdr part))
                                  part))
-                             (mu4e~view-gather-mime-parts))))
+                             (mu4e--view-gather-mime-parts))))
            (files (+mu4e-part-selectors parts)))
       (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
     (user-error (mu4e-format "No attached files found"))))
@@ -35,13 +35,13 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
 (defun +mu4e-view-open-attachment ()
   "Select an attachment, and open it."
   (interactive)
-  (mu4e~view-open-file
-   (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
+  (mu4e--view-open-file
+   (mu4e--view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
 
 (defun +mu4e-view-select-mime-part-action ()
   "Select a MIME part, and perform an action on it."
   (interactive)
-  (let ((labeledparts (+mu4e-part-selectors (mu4e~view-gather-mime-parts))))
+  (let ((labeledparts (+mu4e-part-selectors (mu4e--view-gather-mime-parts))))
     (if labeledparts
         (mu4e-view-mime-part-action
          (cadr (assoc (completing-read "Select part: " (mapcar #'car labeledparts))
@@ -94,7 +94,7 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
       (let* ((msg (or msg (mu4e-message-at-point)))
              (id (+clean-file-name (mu4e-message-field msg :subject) :downcase))
              (attachdir (expand-file-name id mu4e-attachment-dir))
-             (parts (mu4e~view-gather-mime-parts))
+             (parts (mu4e--view-gather-mime-parts))
              (handles '())
              (files '())
              dir)
@@ -185,7 +185,7 @@ used later for Gmail specific actions."
 (defun +mu4e--auto-bcc-h ()
   "Add BCC address from `+mu4e-auto-bcc-address'."
   (when +mu4e-auto-bcc-address
-    (save-excursion (message-add-header (format "BCC: %s\n" +mu4e-auto-bcc-address)))))
+    (save-excursion (message-add-header (format "BCC: %s\n" (string-join (ensure-list +mu4e-auto-bcc-address) ", "))))))
 
 (defun +mu4e--set-from-address-h ()
   "If the user defines multiple `+mu4e-account-aliases' for email aliases
