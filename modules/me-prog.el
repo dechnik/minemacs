@@ -21,11 +21,9 @@
   (use-package treesit-auto
     :straight (:host github :repo "renzmann/treesit-auto")
     :hook (minemacs-after-startup . global-treesit-auto-mode)
-    :commands treesit-auto-install-all
+    :hook (minemacs-build-functions . treesit-auto-install-all)
     :custom
     (treesit-auto-install 'prompt)
-    :init
-    (+register-build-function! treesit-auto-install-all)
     :config
     ;; Install all languages when calling `treesit-auto-install-all'
     (setq treesit-language-source-alist (treesit-auto--build-treesit-source-alist)))
@@ -34,13 +32,13 @@
   (push 'tree-sitter straight-built-in-pseudo-packages)
 
   (use-package ts-fold
-    :straight (:host github :repo "garyo/ts-fold" :branch "andrew-sw/treesit-el-support")
+    :straight (:host github :repo "abougouffa/ts-fold" :branch "andrew-sw/treesit-el-support")
     :after treesit treesit-auto
     :hook (minemacs-after-startup . global-ts-fold-mode))
 
   (use-package combobulate
     :straight t
-    :hook python-ts-mode js-ts-mode css-ts-mode yaml-ts-mode typescript-ts-mode tsx-ts-mode
+    :hook (python-ts-mode js-ts-mode css-ts-mode yaml-ts-mode typescript-ts-mode tsx-ts-mode)
     :custom
     (combobulate-key-prefix "C-c o")))
 
@@ -78,7 +76,7 @@
   (defcustom +eglot-auto-enable-modes
     '(c++-mode c++-ts-mode c-mode c-ts-mode
       python-mode python-ts-mode
-      rust-mode cmake-mode nix-mode
+      rust-mode rust-ts-mode cmake-mode nix-mode
       js-mode js-ts-mode typescript-mode typescript-ts-mode
       json-mode json-ts-mode js-json-mode)
     "Modes for which Eglot can be automatically enabled by `+eglot-auto-enable'."
@@ -224,7 +222,7 @@ the children of class at point."
 
 (use-package compile
   :straight (:type built-in)
-  :commands +toggle-burry-compilation-buffer-if-successful
+  :commands +toggle-bury-compilation-buffer-if-successful
   ;; Enable ANSI colors in compilation buffer
   :hook (compilation-filter . ansi-color-compilation-filter)
   :custom
@@ -237,6 +235,11 @@ the children of class at point."
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'compile-history))
 
+  (defcustom +compilation-auto-bury-msg-level "warning"
+    "Level of messages to consider OK to auto-bury the compilation buffer."
+    :group 'minemacs-prog
+    :type '(choice (const "warning") (const "error") string))
+
   ;; Auto-close the compilation buffer if succeeded without warnings.
   ;; Adapted from: stackoverflow.com/q/11043004/3058915
   (defun +compilation--bury-if-successful-h (buf str)
@@ -247,7 +250,7 @@ the children of class at point."
            (not (with-current-buffer buf
                   (save-excursion
                     (goto-char (point-min))
-                    (search-forward "warning" nil t)))))
+                    (search-forward +compilation-auto-bury-msg-level nil t)))))
       (run-with-timer
        3 nil
        (lambda (b)
@@ -257,7 +260,7 @@ the children of class at point."
            (message "Compilation finished without warnings.")))
        buf)))
 
-  (defun +toggle-burry-compilation-buffer-if-successful ()
+  (defun +toggle-bury-compilation-buffer-if-successful ()
     "Toggle auto-burying the successful compilation buffer."
     (interactive)
     (if (memq '+compilation--bury-if-successful-h compilation-finish-functions)
@@ -279,7 +282,7 @@ the children of class at point."
 
 (use-package editorconfig
   :straight t
-  :hook prog-mode
+  :hook (prog-mode . editorconfig-mode)
   :init
   (+map!
     "fc" '(editorconfig-find-current-editorconfig :wk "Find current EditorConfig")
@@ -297,14 +300,14 @@ the children of class at point."
   :straight t
   :mode "\\.vim\\(rc\\)?\\'")
 
-(use-package cmake-mode
-  :straight (:host github :repo "emacsmirror/cmake-mode" :files (:defaults "*"))
+(unless (+emacs-features-p 'tree-sitter)
+  (+load minemacs-modules-dir "obsolete/me-cmake.el"))
+
+(use-package cmake-ts-mode
+  :straight (:type built-in)
+  :when (+emacs-features-p 'tree-sitter)
   :mode "CMakeLists\\.txt\\'"
   :mode "\\.cmake\\'")
-
-(use-package cmake-font-lock
-  :straight (:host github :repo "Lindydancer/cmake-font-lock" :files (:defaults "*"))
-  :hook (cmake-mode . cmake-font-lock-activate))
 
 (use-package rust-mode
   :straight t
@@ -369,7 +372,7 @@ the children of class at point."
 
 (use-package hl-todo
   :straight (:host github :repo "tarsius/hl-todo")
-  :hook prog-mode
+  :hook (prog-mode . hl-todo-mode)
   :config
   (setq hl-todo-keyword-faces
         (append

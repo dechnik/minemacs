@@ -13,7 +13,7 @@
   :preface
   (defconst +aspell-available-p (executable-find "aspell"))
   :when +aspell-available-p
-  :hook text-mode
+  :hook (text-mode . spell-fu-mode)
   :hook (spell-fu-mode . +spell-fu--init-excluded-faces-h)
   :custom
   (spell-fu-directory (+directory-ensure minemacs-local-dir "spell-fu/"))
@@ -206,7 +206,7 @@
   :config
   (eglot-ltex-enable-handling-client-commands)
   (+eglot-register
-    '(text-mode org-mode markdown-mode rst-mode latex-mode tex-mode bibtex-mode context-mode git-commit-mode)
+    '(text-mode org-mode markdown-mode rst-mode git-commit-mode)
     '("ltex-ls" "--server-type=TcpSocket" "--port" :autoport)))
 
 

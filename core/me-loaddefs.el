@@ -220,7 +220,25 @@ The executable for \"single-file\" which is used archive HTML pages.")
 Save URL into OUT-FILE as a standalone HTML file.
 
 (fn URL OUT-FILE)")
-(register-definition-prefixes "../elisp/+io" '("+html2pdf-default-backend" "+save-as-pdf-filename"))
+(autoload '+lockedp "../elisp/+io" "\
+Return non-nil if the resource NAME is locked.
+
+(fn NAME)")
+(autoload '+locked-by-this-process-p "../elisp/+io" "\
+Return non-nil if the resource NAME locked by this Emacs instance.
+
+(fn NAME)")
+(autoload '+lock "../elisp/+io" "\
+Lock the resource named NAME.
+
+(fn NAME)")
+(autoload '+unlock "../elisp/+io" "\
+Unlock the resource named NAME if locked by this process.
+If FORCE-P is non-nil, force unlocking even if the resource is not locked by the
+current process.
+
+(fn NAME &optional FORCE-P)")
+(register-definition-prefixes "../elisp/+io" '("+html2pdf-default-backend" "+lock--" "+save-as-pdf-filename"))
 
 
 ;;; Generated autoloads from ../elisp/+keybinding.el
@@ -454,17 +472,17 @@ Load environment variables from the file saved in
 Add ROOTS to ignored projects, recentf, etc.
 
 (fn &rest ROOTS)")
-(autoload '+register-build-function! "../elisp/+minemacs" "\
-Register build function FN to be called at the end of `minemacs-update'.
+(autoload '+package-disabled-p "../elisp/+minemacs" "\
+Is package PACKAGE disabled in `minemacs-disabled-packages'.
 
-(fn FN)" nil t)
+(fn PACKAGE)")
 (autoload 'minemacs-run-build-functions "../elisp/+minemacs" "\
-Run all build functions registered with `+register-build-function!'.
+Run all build functions in `minemacs-build-functions'.
 
 (fn &optional DONT-ASK-P)" t)
 (autoload 'minemacs-update "../elisp/+minemacs" "\
 Update MinEmacs packages." t)
-(register-definition-prefixes "../elisp/+minemacs" '("+eval-when-idle-" "+hook-once-num" "+resolve-hook-forms" "+setq-hook-fns" "minemacs--build-functions"))
+(register-definition-prefixes "../elisp/+minemacs" '("+eval-when-idle-" "+hook-once-num" "+resolve-hook-forms" "+setq-hook-fns"))
 
 
 ;;; Generated autoloads from ../elisp/+primitives.el
@@ -732,7 +750,6 @@ This will overwrite the built-in \"gdb-mi\" for this session." t)
 
 ;;; Generated autoloads from ../modules/extras/me-mu4e-extras.el
 
-(autoload '+mu4e-extras-setup "../modules/extras/me-mu4e-extras")
 (register-definition-prefixes "../modules/extras/me-mu4e-extras" '("+mu4e-" "+org-msg-make-signature"))
 
 
