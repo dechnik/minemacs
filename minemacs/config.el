@@ -9,6 +9,9 @@
 ;; Set the default GPG key ID, see "gpg --list-secret-keys"
 ;; (setq-default epa-file-encrypt-to '("XXXX"))
 
+(use-package org-tree-slide
+  :straight t
+  :demand t)
 (use-package password-store
   :straight t
   :demand t)
