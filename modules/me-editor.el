@@ -43,7 +43,7 @@
      header-description
      ;; header-status
      header-author
-     header-maintainer
+     ;; header-maintainer
      header-copyright
      header-creation-date
      ;; header-rcs-id
@@ -51,7 +51,7 @@
      ;; header-pkg-requires
      ;; header-sccs
      header-modification-date
-     header-modification-author
+     ;; header-modification-author
      header-update-count
      ;; header-url
      ;; header-doc-url
@@ -70,7 +70,7 @@
      ;; header-blank
      ;; header-rcs-log
      ;; header-end-line
-     header-free-software
+     ;; header-free-software
      header-code
      header-eof)))
 
@@ -155,16 +155,6 @@
   :straight t
   :init
   (+vmap! "v" #'er/expand-region))
-
-(use-package goggles
-  :straight t
-  :hook ((prog-mode text-mode) . goggles-mode)
-  :config
-  ;; Pulse for evil commands
-  (goggles-define undo primitive-undo evil-undo)
-  (goggles-define yank yank yank-pop evil-yank evil-yank-line)
-  (goggles-define kill kill-region)
-  (goggles-define delete delete-region evil-delete evil-delete-line))
 
 (use-package drag-stuff
   :straight t
