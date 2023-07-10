@@ -16,7 +16,7 @@
   (which-key-idle-secondary-delay nil)
   (which-key-ellipsis "..")
   (which-key-prefix-prefix "+")
-  (which-key-sort-order 'which-key-key-order-alpha)
+  (which-key-sort-order #'which-key-key-order-alpha)
   (which-key-min-display-lines 3)
   (which-key-max-display-columns nil)
   ;; Allow a key binding to be modified by multiple rules in
@@ -166,11 +166,11 @@
 
     ;; ====== Toggle ======
     "t"   '(nil :wk "toggle")
-    "td"  '(toggle-debug-on-error :wk "Debug on error")
+    "td"  #'toggle-debug-on-error
     "tr"  #'read-only-mode
     "tl"  #'follow-mode
-    "tV"  '(netextender-toggle :wk "NetExtender")
-    "te"  '(ecryptfs-toggle-mount-private :wk "eCryptfs")
+    "tV"  #'netextender-toggle
+    "te"  #'ecryptfs-toggle-mount-private
     "tv"  #'visible-mode
 
     ;; ====== Code ======

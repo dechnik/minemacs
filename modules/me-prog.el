@@ -53,8 +53,13 @@
     (unless (or (bound-and-true-p lsp-semantic-tokens-mode)
                 (bound-and-true-p lsp-semantic-tokens-enable))
       (hide-ifdef-mode 1)))
-  (+add-hook! (c-mode c-ts-mode c++-mode c++-ts-mode cuda-mode opencl-mode)
-              :depth 101 #'+hide-ifdef-mode-maybe-h)
+  (defun +hide-ifdef-auto-enable ()
+    (interactive)
+    (if prefix-arg
+        (+remove-hook! (c-mode c-ts-mode c++-mode c++-ts-mode cuda-mode opencl-mode)
+          #'+hide-ifdef-mode-maybe-h)
+      (+add-hook! (c-mode c-ts-mode c++-mode c++-ts-mode cuda-mode opencl-mode)
+                  :depth 101 #'+hide-ifdef-mode-maybe-h)))
   :custom
   (hide-ifdef-shadow t)
   (hide-ifdef-initially t))
@@ -189,21 +194,6 @@ the children of class at point."
   :hook (prog-mode . eldoc-box-hover-at-point-mode)
   :hook (eglot-managed-mode . eldoc-box-hover-at-point-mode))
 
-(use-package cov
-  :straight (:host github :repo "abougouffa/cov" :branch "feat/gcov-cmake")
-  :custom
-  (cov-highlight-lines t)
-  :config
-  (defun +cov-coverage-mode ()
-    (interactive)
-    (if cov-coverage-mode
-        (progn
-          (setq cov-coverage-mode nil)
-          (message "Disabled coverage mode, showing how often lines are executed."))
-      (setq cov-coverage-mode t)
-      (message "Enabled coverage mode."))
-    (cov-update)))
-
 (use-package compile-multi
   :straight t
   :commands +project-compile-multi
@@ -230,15 +220,19 @@ the children of class at point."
   (compilation-always-kill t) ; Always kill current compilation process before starting a new one
   (compilation-skip-visited t) ; Skip visited messages on compilation motion commands
   (compilation-window-height 12) ; Keep it readable
-  :config
-  ;; Integration of `compile' with `savehist'
-  (with-eval-after-load 'savehist
-    (add-to-list 'savehist-additional-variables 'compile-history))
-
+  :init
   (defcustom +compilation-auto-bury-msg-level "warning"
     "Level of messages to consider OK to auto-bury the compilation buffer."
     :group 'minemacs-prog
     :type '(choice (const "warning") (const "error") string))
+  (defcustom +compilation-auto-bury-delay 3.0
+    "The delay in seconds after which the compilation buffer is buried."
+    :group 'minemacs-prog
+    :type 'number)
+  :config
+  ;; Integration of `compile' with `savehist'
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'compile-history))
 
   ;; Auto-close the compilation buffer if succeeded without warnings.
   ;; Adapted from: stackoverflow.com/q/11043004/3058915
@@ -251,8 +245,8 @@ the children of class at point."
                   (save-excursion
                     (goto-char (point-min))
                     (search-forward +compilation-auto-bury-msg-level nil t)))))
-      (run-with-timer
-       3 nil
+      (run-at-time
+       +compilation-auto-bury-delay nil
        (lambda (b)
          (with-selected-window (get-buffer-window b)
            (kill-buffer-and-window))
@@ -350,7 +344,7 @@ the children of class at point."
     "cj" '(+dumb-jump-hydra/body :wk "+dumb-jump-hydra"))
   ;; Use as xref backend
   (with-eval-after-load 'xref
-    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 101))
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
   :config
   ;; Define Hydra keybinding (from the repo's examples)
   (defhydra +dumb-jump-hydra (:color blue :hint nil :foreign-keys warn)
@@ -395,29 +389,14 @@ the children of class at point."
   :custom
   (lua-indent-level 2))
 
-(use-package hy-mode
-  :straight t)
-
-(use-package powershell
-  :straight t)
-
 (use-package franca-idl
   :straight (:host github :repo "zeph1e/franca-idl.el"))
-
-(use-package bnf-mode
-  :straight t)
 
 (use-package nix-mode
   :straight t
   :mode "\\.nix\\'"
   :config
   (+eglot-register 'nix-mode "rnix-lsp"))
-
-(use-package ebnf-mode
-  :straight (:host github :repo "jeramey/ebnf-mode")
-  :hook (ebnf-mode . display-line-numbers-mode)
-  :mode "\\.ebnf\\'")
-
 
 (provide 'me-prog)
 
