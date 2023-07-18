@@ -462,6 +462,10 @@ Unbind setq hooks on HOOKS for VARS.
 Queue FNS to be byte/natively-compiled after a brief delay.
 
 (fn &rest FNS)")
+(autoload '+env-save "../elisp/+minemacs" "\
+Load environment variables from shell and save them to `+env-file'." t)
+(autoload '+env-load "../elisp/+minemacs" "\
+Load environment variables from `+env-file'." t)
 (autoload '+ignore-root "../elisp/+minemacs" "\
 Add ROOTS to ignored projects, recentf, etc.
 
@@ -711,11 +715,6 @@ This depends on `+cape-hosts' and `+cape-global-capes'.
 (fn &optional DISABLE)" t)
 
 
-;;; Generated autoloads from me-core-ui.el
-
-(register-definition-prefixes "me-core-ui" '("+theme--tweaks-h"))
-
-
 ;;; Generated autoloads from ../modules/extras/me-dap-utils.el
 
 (autoload '+github-latest-release "../modules/extras/me-dap-utils" "\
@@ -724,11 +723,6 @@ Get the latest release of USER/REPO. Strips the \"v\" at left.
 Fallback to FALLBACK-RELEASE when it can't get the last one.
 
 (fn USER REPO &optional FALLBACK-RELEASE)")
-
-
-;;; Generated autoloads from me-defaults.el
-
-(register-definition-prefixes "me-defaults" '("+whitespace-auto-cleanup-modes"))
 
 
 ;;; Generated autoloads from ../modules/extras/me-eglot-ltex.el
@@ -809,7 +803,7 @@ Register dictionaries for `LANGS` to spell-fu's multi-dict.
 
 ;;; Generated autoloads from me-vars.el
 
-(register-definition-prefixes "me-vars" '("+env-save-vars" "emacs/features" "minemacs-" "os/" "sys/arch"))
+(register-definition-prefixes "me-vars" '("+env-" "emacs/features" "minemacs-" "os/" "sys/arch"))
 
 
 ;;; Generated autoloads from ../modules/extras/me-writing-mode.el

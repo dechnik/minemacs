@@ -101,10 +101,13 @@ This list is automatically constructed from the environment variables
 (defconst minemacs-cache-dir (concat minemacs-local-dir "cache/"))
 (defconst minemacs-loaddefs-file (concat minemacs-core-dir "me-loaddefs.el"))
 
-(defconst os/linux (and (memq system-type '(gnu gnu/linux)) t))
-(defconst os/bsd (and (memq system-type '(darwin berkeley-unix gnu/kfreebsd)) t))
+(defconst os/linux (eq system-type 'gnu/linux))
+(defconst os/bsd (and (memq system-type '(berkeley-unix gnu/kfreebsd)) t))
 (defconst os/win (and (memq system-type '(cygwin windows-nt ms-dos)) t))
 (defconst os/mac (eq system-type 'darwin))
+
+(when os/win
+  (message "[DISCLAIMER]: MINEMACS HAS NOT BEEN TESTED ON WINDOWS, YOU SHOULD INVESTIGATE THE ISSUES YOU FACE!"))
 
 ;; Should return x86_64, aarch64, armhf, ...
 (defconst sys/arch (intern (car (split-string system-configuration "-"))))
@@ -214,6 +217,41 @@ MinEmacs hooks will be run in this order:
       :variable-pitch-font-family ,varp-font
       :variable-pitch-font-size 13)
     "Default fonts of MinEmacs."))
+
+(defcustom +env-file (concat minemacs-local-dir "system-env.el")
+  "The file in which the environment variables will be saved."
+  :group 'minemacs-core
+  :type 'file)
+
+;; List from Doom Emacs
+(defcustom +env-deny-vars
+  '(;; Unix/shell state that shouldn't be persisted
+    "^HOME$" "^\\(OLD\\)?PWD$" "^SHLVL$" "^PS1$" "^R?PROMPT$" "^TERM\\(CAP\\)?$"
+    "^USER$" "^GIT_CONFIG" "^INSIDE_EMACS$" "^_$"
+    "^JOURNAL_STREAM$" "^INVOCATION_ID$" "^MANAGERPID$" "^SYSTEMD_EXEC_PID$"
+    "^DESKTOP_STARTUP_ID$"
+    "^SESSION_MANAGER$"
+    ;; KDE session
+    "^KDE_\\(FULL_SESSION\\|APPLICATIONS_.*\\|SESSION_\\(UID\\|VERSION\\)\\)$"
+    ;; X server, Wayland, or services' env  that shouldn't be persisted
+    "^DISPLAY$" "^WAYLAND_DISPLAY" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$"
+    ;; Windows+WSL envvars that shouldn't be persisted
+    "^WSL_INTEROP$"
+    ;; XDG variables that are best not persisted.
+    "^XDG_CURRENT_DESKTOP$" "^XDG_RUNTIME_DIR$"
+    "^XDG_\\(VTNR\\|SEAT\\|SESSION_\\(TYPE\\|CLASS\\|ID\\|PATH\\|DESKTOP\\)\\)"
+    ;; Socket envvars, like I3SOCK, GREETD_SOCK, SEATD_SOCK, SWAYSOCK, etc.
+    "SOCK$"
+    ;; ssh and gpg variables that could quickly become stale if persisted.
+    "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$" "^\\(SSH\\|GPG\\)_TTY$"
+    "^GPG_AGENT_INFO$"
+    ;; Internal MinEmacs envvars
+    "^MINEMACSDIR$" "^MINEMACS_\\(DIR\\|IGNORE_.*\\|DEBUG\\|VERBOSE\\|NOT_LAZY\\|MSG_LEVEL\\)$")
+  "Environment variables to omit.
+Each string is a regexp, matched against variable names to omit from
+`+env-file' when saving evnironment variables in `+env-save'."
+  :group 'minemacs-core
+  :type '(repeat regexp))
 
 
 (provide 'me-vars)

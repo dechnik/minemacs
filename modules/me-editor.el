@@ -12,7 +12,9 @@
   :straight t
   :custom
   (tempel-trigger-prefix "<") ;; Require trigger prefix before template name when completing.
-  (tempel-path (concat minemacs-root-dir "templates/tempel/*.eld"))
+  (tempel-path
+   (list (concat minemacs-root-dir "templates/tempel/*.eld")
+         (concat minemacs-config-dir "templates/tempel/*.eld")))
   :bind (("M-\"" . tempel-complete) ;; Alternative tempel-expand
          ("M-*" . tempel-insert)
          :map tempel-map
@@ -28,65 +30,6 @@
   :straight t
   :after tempel
   :demand t)
-
-(use-package header2
-  :straight t
-  :hook (prog-mode . auto-make-header)
-  :custom
-  (header-date-format t)
-  (make-header-hook
-   '(
-     ;; header-mode-line
-     header-title
-     header-blank
-     header-file-name
-     header-description
-     ;; header-status
-     header-author
-     ;; header-maintainer
-     header-copyright
-     header-creation-date
-     ;; header-rcs-id
-     header-version
-     ;; header-pkg-requires
-     ;; header-sccs
-     header-modification-date
-     ;; header-modification-author
-     header-update-count
-     ;; header-url
-     ;; header-doc-url
-     ;; header-keywords
-     ;; header-compatibility
-     header-blank
-     ;; header-lib-requires
-     header-end-line
-     header-commentary
-     header-blank
-     header-blank
-     header-blank
-     header-end-line
-     ;; header-history
-     ;; header-blank
-     ;; header-blank
-     ;; header-rcs-log
-     ;; header-end-line
-     ;; header-free-software
-     header-code
-     header-eof)))
-
-(use-package unicode-fonts
-  :straight t
-  :hook (minemacs-after-startup . +unicode-fonts-setup)
-  :config
-  (defun +unicode-fonts-setup ()
-    "Prefer the `:unicode-font-family' from `minemacs-fonts'."
-    (when-let ((frame (selected-frame)))
-      (when (display-multi-font-p frame)
-        (with-selected-frame frame
-          (when-let ((unicode-font-family (plist-get minemacs-fonts :unicode-font-family)))
-            (dolist (unicode-block unicode-fonts-block-font-mapping)
-              (push unicode-font-family (cadr unicode-block))))
-          (unicode-fonts-setup))))))
 
 (unless (and (>= emacs-major-version 28) (+emacs-features-p 'harfbuzz 'cairo))
   (push 'ligature minemacs-disabled-packages))

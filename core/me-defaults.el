@@ -27,76 +27,40 @@
 
 (setopt
  ;; ====== Default directories for builtin packages ======
- abbrev-file-name (concat minemacs-local-dir "abbrev.el")
- auto-insert-directory (+directory-ensure minemacs-local-dir "auto-insert/")
  auto-save-list-file-prefix (+directory-ensure minemacs-local-dir "auto-save/")
  backup-directory-alist (list (cons "." (+directory-ensure minemacs-local-dir "backup/")))
- bookmark-default-file (concat minemacs-local-dir "bookmark.el")
- calc-settings-file (concat minemacs-local-dir "calc-settings.el")
- custom-theme-directory (concat minemacs-config-dir "themes/")
- desktop-dirname (+directory-ensure minemacs-local-dir "desktop/")
- desktop-path (list desktop-dirname)
  diary-file (concat minemacs-local-dir "diary")
+ custom-theme-directory (concat minemacs-config-dir "themes/")
  ecomplete-database-file (concat minemacs-local-dir "ecomplete-database.el")
  ede-project-placeholder-cache-file (concat minemacs-local-dir "ede-projects.el")
  erc-dcc-get-default-directory (+directory-ensure minemacs-local-dir "erc/dcc/")
  erc-log-channels-directory (+directory-ensure minemacs-local-dir "erc/log-channels/")
- eshell-aliases-file (concat minemacs-local-dir "eshell/aliases")
- eshell-directory-name (+directory-ensure minemacs-local-dir "eshell/")
- eshell-history-file-name (concat minemacs-local-dir "eshell/history.el")
- eshell-last-dir-ring-file-name (concat minemacs-local-dir "eshell/last-dir-ring.el")
- eshell-login-script (concat minemacs-local-dir "eshell/login")
- eshell-rc-script (concat minemacs-local-dir "eshell/rc")
  eudc-options-file (concat minemacs-local-dir "eudc-options.el")
  eww-bookmarks-directory (+directory-ensure minemacs-local-dir "eww/bookmarks/")
  fortune-dir (+directory-ensure minemacs-local-dir "fortune/")
  fortune-file (expand-file-name "local" fortune-dir)
- gnus-dribble-directory (+directory-ensure minemacs-local-dir "gnus/dribble/")
- gnus-init-file (concat minemacs-config-dir "gnus/init.el")
- gnus-startup-file (concat minemacs-config-dir "gnus/newsrc")
  ido-save-directory-list-file (concat minemacs-local-dir "ido-save-directory-list.el")
- image-dired-dir (+directory-ensure minemacs-local-dir "image-dired/")
- image-dired-tags-db-file (concat minemacs-local-dir "image-dired/tags-db.el")
- image-dired-temp-rotate-image-file (concat minemacs-cache-dir "image-dired/temp-rotate-image")
  kkc-init-file-name (concat minemacs-local-dir "kkc-init.el")
  multisession-dir (concat minemacs-local-dir "multisession/")
  newsticker-cache-filename (concat minemacs-local-dir "newsticker/cache.el")
  newsticker-dir (+directory-ensure minemacs-local-dir "newsticker/data/")
  nsm-settings-file (concat minemacs-local-dir "nsm-settings.el")
- org-clock-persist-file (concat minemacs-cache-dir "org/clock-persist.el")
- org-id-locations-file (concat minemacs-cache-dir "org/id-locations.el")
- org-persist-directory (+directory-ensure minemacs-cache-dir "org/persist/")
- org-preview-latex-image-directory (+directory-ensure minemacs-cache-dir "org/preview/latex-image/")
- org-publish-timestamp-directory (+directory-ensure minemacs-cache-dir "org/publish/timestamps/")
- project-list-file (concat minemacs-local-dir "project-list.el")
  quickurl-url-file (concat minemacs-local-dir "quickurl-url.el")
  rcirc-log-directory (+directory-ensure minemacs-local-dir "rcirc/log/")
- recentf-save-file (concat minemacs-local-dir "recentf-save.el")
  remember-data-directory (+directory-ensure minemacs-local-dir "remember/data/")
  remember-data-file (concat minemacs-local-dir "remember/data.el")
- save-place-file (concat minemacs-local-dir "save-place.el")
- savehist-file (concat minemacs-local-dir "savehist.el")
  semanticdb-default-system-save-directory (concat minemacs-local-dir "semantic/")
  shadow-info-file (concat minemacs-local-dir "shadow/info.el")
  shadow-todo-file (concat minemacs-local-dir "shadow/todo.el")
  shared-game-score-directory (+directory-ensure minemacs-local-dir "shared-game-score/")
  srecode-map-save-file (concat minemacs-local-dir "srecode-map.el")
  timeclock-file (concat minemacs-local-dir "timeclock")
- tramp-auto-save-directory (concat minemacs-local-dir "tramp/auto-save/")
- tramp-backup-directory-alist backup-directory-alist
- tramp-persistency-file-name (concat minemacs-local-dir "tramp/persistency.el")
  type-break-file-name (concat minemacs-local-dir "type-break.el")
- url-cache-directory (+directory-ensure minemacs-cache-dir "url/")
- url-configuration-directory (+directory-ensure minemacs-local-dir "url/")
- url-cookie-file (concat minemacs-local-dir "url/cookie.el")
- url-history-file (concat minemacs-local-dir "url/history.el")
-
- ;; ====== Additional directories for non-builtin but common packages ======
- pcache-directory (concat minemacs-cache-dir "pcache/")
+ viper-custom-file-name (concat minemacs-local-dir "viper.el")
 
  ;; ====== Default behavior ======
  ;; Inhibit startup message
- inhibit-startup-message t
+ inhibit-startup-screen t
  ;; Do not ring
  ring-bell-function #'ignore
  ;; Set to non-nil to flash!
@@ -131,14 +95,10 @@
  vc-follow-symlinks t
  ;; Display the true file name for symlinks
  find-file-visit-truename t
- ;; Use completion in the minibuffer instead of definitions buffer
- xref-show-definitions-function #'xref-show-definitions-completing-read
  ;; Enable recursive calls to minibuffer
  enable-recursive-minibuffers t
  ;; Kill the shell buffer after exit
  shell-kill-buffer-on-exit t
- ;; Revert non-file buffers like dired
- global-auto-revert-non-file-buffers t
  ;; Don't prompt for confirmation when we create a new file or buffer
  confirm-nonexistent-file-or-buffer nil
  ;; More intuitive buffer naming style
@@ -165,10 +125,6 @@
  x-stretch-cursor t
  ;; Resize window combinations proportionally
  window-combination-resize t
- ;; Enable time in the mode-line
- display-time-string-forms '((propertize (concat 24-hours ":" minutes)))
- ;; Relative line numbering
- display-line-numbers-type 'relative
  ;; No ugly button for widgets
  widget-image-enable nil
  ;; Show unprettified symbol under cursor (when in `prettify-symbols-mode')
@@ -179,11 +135,6 @@
  use-system-tooltips nil
  ;; Animated images loop forever instead of playing the animation only once
  image-animate-loop t
- ;; Set line width for the divider in `window-divider-mode' to 2px
- window-divider-default-bottom-width 2
- window-divider-default-right-width 2
- ;; Do not show tabs (`tab-bar' is configured in `me-workspaces')
- tab-bar-show nil
 
  ;; ====== Undo ======
  ;; 10MB (default is 160kB)
@@ -196,14 +147,8 @@
  ;; ====== Editing ======
  ;; Hitting TAB behavior
  tab-always-indent 'complete
- ;; Default behavior for `whitespace-cleanup'
- whitespace-action '(cleanup auto-cleanup)
  ;; End files with newline
  require-final-newline t
- ;; Enable Drag-and-Drop of regions
- mouse-drag-and-drop-region t
- ;; Enable Drag-and-Drop of regions from Emacs to external programs
- mouse-drag-and-drop-region-cross-program t
 
  ;; ====== Backups ======
  ;; Disable lockfiles
@@ -241,40 +186,6 @@
  hscroll-margin 2
  ;; The number of columns to scroll
  hscroll-step 1
- ;; Better scrolling on Emacs29+, specially on a touchpad
- pixel-scroll-precision-use-momentum t
- ;; Make mouse scroll a little faster
- mouse-wheel-scroll-amount  '(2 ((shift) . hscroll) ((meta) . nil) ((control meta) . global-text-scale) ((control) . text-scale))
- ;; Make mouse scroll a little faster horizontally
- mouse-wheel-scroll-amount-horizontal 2
-
- ;; ====== Recent files ======
- ;; Increase the maximum number of saved items
- recentf-max-saved-items 100
- ;; Ignore case when searching recentf files
- recentf-case-fold-search t
- ;; Exclude some files from being remembered by recentf
- recentf-exclude
- `(,(rx (* any)
-     (or
-      "elfeed-db"
-      "eln-cache"
-      "/cache/"
-      ".maildir/"
-      ".cache/")
-     (* any)
-     (? (or "html" "pdf" "tex" "epub")))
-   ,(rx "/"
-     (or "rsync" "ssh" "tmp" "yadm" "sudoedit" "sudo")
-     (* any)))
-
- ;; ====== Timestamps ======
- ;; Do enable time-stamps
- time-stamp-active t
- ;; Check the first 12 buffer lines for Time-stamp: <>
- time-stamp-line-limit 12
- ;; Timestamp format
- time-stamp-format "%04Y-%02m-%02d %02H:%02M:%02S"
 
  ;; ====== Auto-Saving, sessions ======
  ;; Enable auto-save (use `recover-file' or `recover-session' to recover)
@@ -286,38 +197,7 @@
  `(;; Prefix tramp autosaves with "tramp-"
    ("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" ,(concat auto-save-list-file-prefix "tramp-\\2") t)
    ;; Local autosaves
-   (".*" ,auto-save-list-file-prefix t))
- ;; File name to use when saving desktop
- desktop-base-file-name "emacs-session.el"
- ;; File name to use as a lock
- desktop-base-lock-name (concat desktop-base-file-name ".lock")
- ;; Load only 5 buffers immediately, the remaining buffers will be loaded lazily
- desktop-restore-eager 5
- ;; Avoid writing contents unchanged between auto-saves
- desktop-file-checksum t
-
- ;; ====== Misc ======
- ;; Set `webjump' sites to manily search engins
- webjump-sites
- '(("Emacs Wiki"    . [simple-query "www.emacswiki.org" "www.emacswiki.org/cgi-bin/wiki/" ""])
-   ("DuckDuckGo"    . [simple-query "duckduckgo.com" "duckduckgo.com/?q=" ""])
-   ("Qwant"         . [simple-query "www.qwant.com" "www.qwant.com/?q=" ""])
-   ("Ecosia"        . [simple-query "www.ecosia.org" "www.ecosia.org/search?q=" ""])
-   ("Brave"         . [simple-query "search.brave.com" "search.brave.com/search?q=" ""])
-   ("Bing"          . [simple-query "www.bing.com" "www.bing.com/search?q=" ""])
-   ("Yahoo"         . [simple-query "www.yahoo.com" "search.yahoo.com/search?p=" ""])
-   ("Google"        . [simple-query "www.google.com" "www.google.com/search?q=" ""])
-   ("Google Maps"   . [simple-query "www.google.com" "www.google.com/maps?q=" ""])
-   ("Google Images" . [simple-query "www.google.com" "www.google.com/images?q=" ""])
-   ("Google Groups" . [simple-query "groups.google.com" "groups.google.com/groups?q=" ""])
-   ("StackOverflow" . [simple-query "stackoverflow.com" "stackoverflow.com/search?q=" ""])
-   ("GitHub Repo"   . [simple-query "github.com" "github.com/search?type=repositories&q=" ""])
-   ("GitHub Code"   . [simple-query "github.com" "github.com/search?type=code&q=" ""])
-   ("WolframAlpha"  . [simple-query "wolframalpha.com" "wolframalpha.com/input/?i=" ""])
-   ("MDN"           . [simple-query "developer.mozilla.org" "developer.mozilla.org/search?q=" ""])
-   ("Youtube"       . [simple-query "www.youtube.com" "www.youtube.com/results?search_query=" ""])
-   ("Reddit"        . [simple-query "www.reddit.com" "www.reddit.com/search/?q=" ""])
-   ("Wikipedia"     . [simple-query "wikipedia.org" "wikipedia.org/wiki/" ""])))
+   (".*" ,auto-save-list-file-prefix t)))
 
 (setq-default
  ;; ====== Buffer-local variables ======
@@ -327,37 +207,10 @@
  fill-column 80
  ;; Never mix, use only spaces
  indent-tabs-mode nil
- ;; Width for line numbers
- display-line-numbers-width 4
- ;; Display absolute line numbers in narrowed regions
- display-line-numbers-widen t
  ;; Small tab is enough!
- tab-width 2
- ;; Save buffer status
- desktop-save-buffer t)
+ tab-width 2)
 
 ;; ====== Misc hooks and advices ======
-;; Advice `emacs-session-filename' to ensure creating "session.ID" files in
-;; a sub-directory
-(with-eval-after-load 'x-win
-  (advice-add
-   #'emacs-session-filename :filter-return
-   (defun +emacs-session-filename--in-subdir-a (session-filename)
-     "Put the SESSION-FILENAME in the \"x-win/\" sub-directory."
-     (concat (+directory-ensure minemacs-local-dir "x-win/")
-             (file-name-nondirectory session-filename)))))
-
-;; Kill `term' buffer on exit (reproduce a similar behavior to `shell's
-;; `shell-kill-buffer-on-exit').
-(advice-add
- 'term-sentinel :around
- (defun +term--kill-after-exit-a (orig-fn proc msg)
-   (if (memq (process-status proc) '(signal exit))
-       (let ((buffer (process-buffer proc)))
-         (apply orig-fn (list proc msg))
-         (kill-buffer buffer))
-     (apply orig-fn (list proc msg)))))
-
 ;; Kill the minibuffer when switching by mouse to another window.
 ;; Adapted from: trey-jackson.blogspot.com/2010/04/emacs-tip-36-abort-minibuffer-when.html
 (add-hook
@@ -368,24 +221,6 @@
      (abort-recursive-edit))))
 
 ;; ====== Tweaks on file save ======
-;; Update time stamp (if available) before saving a file.
-(add-hook 'before-save-hook 'time-stamp)
-
-(defcustom +whitespace-auto-cleanup-modes
-  '(prog-mode conf-mode org-mode markdown-mode
-    latex-mode tex-mode bibtex-mode)
-  "Enable auto white space cleanup before saving for these derived modes."
-  :group 'minemacs-edit
-  :type '(repeat symbol))
-
-;; Auto-remove trailing white spaces before saving for modes defined in
-;; `+whitespace-auto-cleanup-modes'.
-(add-hook
- 'before-save-hook
- (defun +save--whitespace-cleanup-h ()
-   (when (cl-some #'derived-mode-p +whitespace-auto-cleanup-modes)
-     (whitespace-cleanup))))
-
 ;; Guess the major mode after saving a file in `fundamental-mode' (adapted
 ;; from Doom Emacs).
 (add-hook
@@ -400,19 +235,7 @@ or file path may exist now."
             (eq buffer (window-buffer (selected-window))) ;; Only visible buffers
             (set-auto-mode))))))
 
-;; Make scripts (files starting wiht shebang "#!") executable when saved
-(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-
 ;; ====== Modes enabled locally, mainly for `prog-mode', `conf-mode' and `text-mode' ======
-;; Show line numbers
-(+add-hook! (prog-mode conf-mode text-mode) #'display-line-numbers-mode)
-
-;; Highlight the current line
-(+add-hook! (prog-mode conf-mode text-mode) #'hl-line-mode)
-
-;; Hide/show code blocks, a.k.a. code folding
-(+add-hook! (prog-mode conf-mode) #'hs-minor-mode)
-
 ;; Wrap long lines
 (+add-hook! (prog-mode conf-mode text-mode) #'visual-line-mode)
 
@@ -448,34 +271,11 @@ or file path may exist now."
   ;; Window layout undo/redo (`winner-undo' / `winner-redo')
   (winner-mode 1)
 
-  ;; Display divider between windows
-  (window-divider-mode 1)
-
-  ;; Scroll pixel by pixel, in Emacs29+ there is a more pricise mode way to scroll
-  (if (>= emacs-major-version 29)
-      (pixel-scroll-precision-mode 1)
-    (pixel-scroll-mode 1))
-
-  ;; Display time in mode-line
-  (display-time-mode 1)
-
   ;; Replace selection after start typing
   (delete-selection-mode 1)
 
-  ;; Enable `recentf-mode' to remember recent files
-  (+shutup! (recentf-mode 1))
-
   ;; Show recursion depth in minibuffer (see `enable-recursive-minibuffers')
   (minibuffer-depth-indicate-mode 1)
-
-  ;; Save place in files
-  (save-place-mode 1)
-
-  ;; Enable saving minibuffer history
-  (savehist-mode 1)
-
-  ;; Auto load files changed on disk
-  (global-auto-revert-mode 1)
 
   ;; Show line number in mode-line
   (line-number-mode 1)
@@ -485,9 +285,6 @@ or file path may exist now."
 
   ;; Better handling for files with so long lines
   (global-so-long-mode 1)
-
-  ;; Save Emacs state from one session to another
-  (desktop-save-mode 1)
 
   ;; Global SubWord mode
   (global-subword-mode 1))

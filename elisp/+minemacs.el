@@ -396,6 +396,35 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
             (+shutup! (byte-compile fn)))))))
 
 ;;;###autoload
+(defun +env-save ()
+  "Load environment variables from shell and save them to `+env-file'."
+  (interactive)
+  (with-temp-buffer
+    (insert ";; -*- mode: emacs-lisp; no-byte-compile: t; no-native-compile: t; -*-\n\n")
+    (let ((env-vars
+           (mapcar ; Get environment variables from shell into an alist
+            (lambda (l) (let ((s (string-split l "="))) (cons (car s) (string-join (cdr s) "="))))
+            (string-lines (shell-command-to-string "env") "="))))
+      ;; Special treatment for the "PATH" variable, save it to `exec-path'
+      (when-let ((path (alist-get "PATH" env-vars nil nil #'string=)))
+        (insert
+         (format "\n;; Adding PATH content to `exec-path'\n(setq exec-path (delete-dups (append exec-path '%s)))\n\n"
+                 (mapcar (lambda (s) (concat "\"" s "\"")) (parse-colon-path path)))))
+      ;; Save the environment variables to `process-environment' using `setenv'
+      (insert ";; Adding the rest of the environment variables\n")
+      (dolist (env-var env-vars)
+        (unless (cl-some (+apply-partially-right #'string-match-p (car env-var)) +env-deny-vars)
+          (insert (format "(setenv \"%s\" \"%s\")\n" (car env-var) (cdr env-var))))))
+    (write-file +env-file)))
+
+;;;###autoload
+(defun +env-load ()
+  "Load environment variables from `+env-file'."
+  (interactive)
+  (unless (file-exists-p +env-file) (+env-save))
+  (+load +env-file))
+
+;;;###autoload
 (defun +ignore-root (&rest roots)
   "Add ROOTS to ignored projects, recentf, etc."
   (dolist (root roots)
@@ -410,7 +439,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 ;;;###autoload
 (defun minemacs-run-build-functions (&optional dont-ask-p)
   "Run all build functions in `minemacs-build-functions'."
-  (interactive)
+  (interactive "P")
   (dolist (fn minemacs-build-functions)
     (message "MinEmacs: Running `%s'" fn)
     (if dont-ask-p

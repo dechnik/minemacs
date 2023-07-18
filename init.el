@@ -128,6 +128,11 @@
     (when (file-exists-p user-init-tweaks)
       (+load user-init-tweaks))))
 
+;; HACK: Load the environment variables saved from shell using `+env-save' to
+;; `+env-file'. `+env-save' saves all environment variables except these matched
+;; by `+env-deny-vars'.
+(unless os/win (+env-load)) ; Load environment variables when available.
+
 ;; NOTE: This is MinEmacs' synchronization point. To get a fast Emacs startup,
 ;; MinEmacs tries to defer loading most of its packages until this hook is
 ;; executed. This is managed by the `minemacs-loaded' and `minemacs-lazy'

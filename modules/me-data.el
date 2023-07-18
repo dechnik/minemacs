@@ -54,7 +54,7 @@
   :straight t
   :mode "\\.js\\(?:on\\|[hl]int\\(?:rc\\)?\\)\\'"
   :config
-  (+map-local! :keymaps 'json-mode-map
+  (+map-local! :keymaps '(json-mode-map json-ts-mode-map)
     "p" #'json-mode-show-path
     "t" #'json-toggle-boolean
     "d" #'json-mode-kill-path
@@ -75,11 +75,6 @@
     "l" #'graphviz-turn-on-live-preview
     "L" #'graphviz-turn-off-live-preview)
   (+eglot-register 'graphviz-dot-mode '("dot-language-server" "--stdio")))
-
-(use-package nxml-mode
-  :straight (:type built-in)
-  :config
-  (+eglot-register '(nxml-mode xml-mode) "lemminx"))
 
 (use-package plantuml-mode
   :straight t
