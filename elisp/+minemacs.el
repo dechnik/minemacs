@@ -29,13 +29,6 @@
       (apply #'message (list (concat "[MinEmacs:Log] " ,msg) ,@vars)))))
 
 ;;;###autoload
-(defmacro +debug! (msg &rest vars)
-  "Log error MSG and VARS using `message'."
-  (when (>= minemacs-msg-level 4)
-    `(let ((inhibit-message t))
-      (apply #'message (list (concat "[MinEmacs:Debug] " ,msg) ,@vars)))))
-
-;;;###autoload
 (defun +emacs-features-p (&rest feats)
   "Is features FEATS are enabled in this Emacs build."
   (and (cl-every (lambda (feat) (memq feat emacs/features)) feats) t))
@@ -119,6 +112,11 @@ If NO-MESSAGE-LOG is non-nil, do not print any message to *Messages* buffer."
   :group 'minemacs-core
   :type 'float)
 
+(defcustom +lazy-delay 1.0
+  "The default delay (in seconds) to consider in `+lazy!' macro."
+  :group 'minemacs-core
+  :type 'float)
+
 ;;;###autoload
 (defun +eval-when-idle (delay &rest fns)
   "Queue FNS to be processed when Emacs becomes idle."
@@ -180,7 +178,7 @@ If NO-MESSAGE-LOG is non-nil, do not print any message to *Messages* buffer."
 (defmacro +lazy! (&rest body)
   "Run BODY as a lazy block (see `minemacs-lazy')."
   `(with-eval-after-load 'minemacs-lazy
-    (+eval-when-idle-for! 1.0
+    (+eval-when-idle-for! +lazy-delay
      ,@body)))
 
 ;;;###autoload
@@ -395,6 +393,23 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
           (let (byte-compile-warnings)
             (+shutup! (byte-compile fn)))))))
 
+(defvar +shell-command-switch
+  (pcase shell-file-name
+    ((rx "fish") "-lc")
+    ((rx (or "tsch" "csh")) "-dc")
+    (_ "-ilc")))
+
+;; https://emacs.stackexchange.com/a/21432/37002
+(defun +shell-command-to-string-ignore-stderr (command)
+  "Execute shell command COMMAND and return its output as a string.
+
+Works like `shell-command-to-string' with two differences:
+1. It uses `+shell-command-switch' instead of `shell-command-switch'.
+2. It returns only stdout and ignore the output of stderr."
+  (with-output-to-string
+    (with-current-buffer standard-output
+      (process-file shell-file-name nil '(t nil) nil +shell-command-switch command))))
+
 ;;;###autoload
 (defun +env-save ()
   "Load environment variables from shell and save them to `+env-file'."
@@ -403,13 +418,14 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
     (insert ";; -*- mode: emacs-lisp; no-byte-compile: t; no-native-compile: t; -*-\n\n")
     (let ((env-vars
            (mapcar ; Get environment variables from shell into an alist
-            (lambda (l) (let ((s (string-split l "="))) (cons (car s) (string-join (cdr s) "="))))
-            (string-lines (shell-command-to-string "env") "="))))
+            (lambda (line) (let ((var-val (string-split line "="))) (cons (car var-val) (string-join (cdr var-val) "="))))
+            ;; "env --null" ends lines with null byte instead of newline
+            (string-split (+shell-command-to-string-ignore-stderr "env --null") "\0"))))
       ;; Special treatment for the "PATH" variable, save it to `exec-path'
       (when-let ((path (alist-get "PATH" env-vars nil nil #'string=)))
-        (insert
-         (format "\n;; Adding PATH content to `exec-path'\n(setq exec-path (delete-dups (append exec-path '%s)))\n\n"
-                 (mapcar (lambda (s) (concat "\"" s "\"")) (parse-colon-path path)))))
+        (insert "\n;; Adding PATH content to `exec-path'\n"
+                (format "(setq exec-path (delete-dups (append exec-path '%s)))\n\n"
+                        (mapcar (apply-partially #'format "\"%s\"") (parse-colon-path path)))))
       ;; Save the environment variables to `process-environment' using `setenv'
       (insert ";; Adding the rest of the environment variables\n")
       (dolist (env-var env-vars)

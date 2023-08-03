@@ -1234,7 +1234,7 @@
 
 (use-package ox-latex
   :straight (:type built-in)
-  :after org
+  :after ox
   :custom
   (org-latex-src-block-backend 'engraved)
   (org-latex-prefer-user-labels t)
@@ -1288,6 +1288,18 @@
      org-latex-pdf-process
      '("tectonic -X compile --outdir=%o -Z shell-escape -Z continue-on-errors %f")))))
 
+(use-package ox-koma-letter
+  :after ox
+  :demand t)
+
+(use-package ox-odt
+  :after ox
+  :demand t)
+
+(use-package ox-beamer
+  :after ox
+  :demand t)
+
 (use-package org-agenda
   :straight (:type built-in)
   :custom
@@ -1320,6 +1332,55 @@
     (defun +ediff--restore-window-config-h ()
       (when (window-configuration-p +ediff--saved-window-config)
         (set-window-configuration +ediff--saved-window-config)))))
+
+(use-package smerge-mode
+  :straight (:type built-in)
+  :commands +smerge-hydra/body
+  :init
+  (+map! "gm" '(+smerge-hydra/body :wk "sMerge"))
+  :config
+  (with-eval-after-load 'hydra
+    (defhydra +smerge-hydra (:hint nil
+                                   :pre (if (not smerge-mode) (smerge-mode 1))
+                                   ;; Disable `smerge-mode' when quitting hydra if
+                                   ;; no merge conflicts remain.
+                                   :post (smerge-auto-leave))
+      "
+                                                         [smerge]
+  Movement   Keep           Diff              Other         │
+  ╭─────────────────────────────────────────────────────────╯
+  │  ^_g_^       [_b_] base       [_<_] upper/base    [_C_] Combine
+  │  ^_C-k_^     [_u_] upper      [_=_] upper/lower   [_r_] resolve
+  │  ^_k_ ↑^     [_l_] lower      [_>_] base/lower    [_R_] remove
+  │  ^_j_ ↓^     [_a_] all        [_H_] hightlight    [_n_] next in project
+  │  ^_C-j_^     [_RET_] current  [_E_] ediff
+  │  ^_G_^                                                 [_q_] quit
+  ╰─────────────────────────────────────────────────────╯
+"
+      ("g" (progn (goto-char (point-min)) (smerge-next)))
+      ("G" (progn (goto-char (point-max)) (smerge-prev)))
+      ("C-j" smerge-next)
+      ("C-k" smerge-prev)
+      ("j" next-line)
+      ("k" previous-line)
+      ("b" smerge-keep-base)
+      ("u" smerge-keep-upper)
+      ("l" smerge-keep-lower)
+      ("a" smerge-keep-all)
+      ("RET" smerge-keep-current)
+      ("\C-m" smerge-keep-current)
+      ("<" smerge-diff-base-upper)
+      ("=" smerge-diff-upper-lower)
+      (">" smerge-diff-base-lower)
+      ("H" smerge-refine)
+      ("E" smerge-ediff)
+      ("C" smerge-combine-with-next)
+      ("r" smerge-resolve)
+      ("R" smerge-kill-current)
+      ;; Often after calling `smerge-vc-next-conflict', the cursor will land at
+      ;; the bottom of the window
+      ("n" (progn (smerge-vc-next-conflict) (recenter-top-bottom (/ (window-height) 8))))
+      ("q" nil :color blue))))
 
 (use-package octave
   :straight (:type built-in)

@@ -143,7 +143,7 @@
   :demand t
   :custom
   (dap-cpptools-extension-version
-   (+github-latest-release "microsoft" "vscode-cpptools" "1.15.4")))
+   (+github-latest-release "microsoft" "vscode-cpptools" "1.16.3")))
 
 (use-package dap-codelldb
   :after dap-mode
@@ -154,7 +154,9 @@
 
 (use-package dap-python
   :after dap-mode
-  :demand t)
+  :demand t
+  :custom
+  (dap-python-debugger 'debugpy)) ; the default `ptvsd' has beed depracated
 
 (use-package dap-mouse
   :after dap-mode
