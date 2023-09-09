@@ -249,17 +249,6 @@ Example: \"#+TITLE\" -> \"#+title\"
            ("\\subsection{%s}"    . "\\subsection*{%s}")
            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
            ("\\paragraph{%s}"     . "\\paragraph*{%s}"))
-          ("book-no-parts-facile" ;; Compliant with the FACILE test (https://facile.cines.fr), must be compiled with pdfLaTeX.
-           ,(string-join
-             '("\\pdfobjcompresslevel 0"
-               "\\documentclass[12pt,a4paper]{book}"
-               "\\usepackage[a-1b,mathxmp]{pdfx}")
-             "\n")
-           ("\\chapter{%s}"       . "\\chapter*{%s}")
-           ("\\section{%s}"       . "\\section*{%s}")
-           ("\\subsection{%s}"    . "\\subsection*{%s}")
-           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-           ("\\paragraph{%s}"     . "\\paragraph*{%s}"))
           ("lettre"
            "\\documentclass{lettre}"
            ("\\section{%s}"       . "\\section*{%s}")
@@ -283,6 +272,13 @@ Example: \"#+TITLE\" -> \"#+title\"
            ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))
           ("sagej"
            "\\documentclass{sagej}"
+           ("\\section{%s}"       . "\\section*{%s}")
+           ("\\subsection{%s}"    . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+           ("\\paragraph{%s}"     . "\\paragraph*{%s}")
+           ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))
+          ("ws-us"
+           "\\documentclass{ws-us}"
            ("\\section{%s}"       . "\\section*{%s}")
            ("\\subsection{%s}"    . "\\subsection*{%s}")
            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")

@@ -73,9 +73,6 @@ Delete all other windows showing the selected window's buffer." t)
 (autoload '+delete-window-maybe-kill-buffer "../elisp/+buffer" "\
 Delete selected window.
 If no other window shows its buffer, kill the buffer too." t)
-(autoload '+fill-scratch-buffer "../elisp/+buffer" "\
-Fill the `initial-scratch-message'.
-When available, use \"fortune\" to add a random quote.")
 (register-definition-prefixes "../elisp/+buffer" '("+kill-buffer-no-ask-list"))
 
 
@@ -90,6 +87,7 @@ Examples:
 
 (fn MODES &rest SERVERS)")
 (function-put '+eglot-register 'lisp-indent-function 0)
+(register-definition-prefixes "../elisp/+eglot" '("+eglot-ccls-inheritance-hierarchy"))
 
 
 ;;; Generated autoloads from ../elisp/+emacs.el
@@ -338,10 +336,6 @@ If NO-MESSAGE-LOG is non-nil, do not print any message to *Messages* buffer.
 Suppress new messages temporarily in the echo area and the `*Messages*' buffer while BODY is evaluated.
 
 (fn &rest BODY)" nil t)
-(autoload '+suppress! "../elisp/+minemacs" "\
-Suppress new messages temporarily in the echo area while BODY is evaluated.
-
-(fn &rest BODY)" nil t)
 (autoload '+cmdfy! "../elisp/+minemacs" "\
 Convert BODY to an interactive command.
 
@@ -378,11 +372,6 @@ Like `+deferred!', with BODY executed only if CONDITION is nil.
 
 (fn CONDITION &rest BODY)" nil t)
 (function-put '+deferred-unless! 'lisp-indent-function 1)
-(autoload '+deferred-or-immediate! "../elisp/+minemacs" "\
-Like `+deferred!', with BODY deferred if CONDITION is non-nil, otherwise it acts like `progn'.
-
-(fn CONDITION &rest BODY)" nil t)
-(function-put '+deferred-or-immediate! 'lisp-indent-function 1)
 (autoload '+lazy! "../elisp/+minemacs" "\
 Run BODY as a lazy block (see `minemacs-lazy').
 
@@ -397,11 +386,6 @@ Like `+lazy!', with BODY executed only if CONDITION is nil.
 
 (fn CONDITION &rest BODY)" nil t)
 (function-put '+lazy-unless! 'lisp-indent-function 1)
-(autoload '+lazy-or-immediate! "../elisp/+minemacs" "\
-Like `+lazy!', with BODY deferred if CONDITION is non nil, otherwise it acts like `progn'.
-
-(fn CONDITION &rest BODY)" nil t)
-(function-put '+lazy-or-immediate! 'lisp-indent-function 1)
 (autoload '+after-load! "../elisp/+minemacs" "\
 Execute BODY after FEATURES have been loaded.
 
@@ -562,7 +546,9 @@ Like `apply-partially', but applies the ARGS to the right of FUN.
 ;;; Generated autoloads from ../elisp/+project.el
 
 (autoload '+project-scan-for-projects "../elisp/+project" "\
-Scan and remember projects under `+project-scan-dir-paths'." t)
+Scan and remember projects under DIR or `+project-scan-dir-paths'.
+
+(fn &optional DIR)" t)
 (autoload '+project-add-project "../elisp/+project" "\
 Switch to another project at DIR.
 When DIR is not detected as a project, ask to force it to be by adding a
@@ -653,26 +639,6 @@ Start systemd SERVICE.
 Stops the systemd SERVICE.
 
 (fn SERVICE &optional PRE-FN POST-FN)")
-
-
-;;; Generated autoloads from ../elisp/+unix.el
-
-(autoload '+chmod-this-file "../elisp/+unix" "\
-Execute Unix command `chmod'.  Current buffer's file is default arg.
-CMD is the command to execute (interactively, `chmod').
-
-(fn CMD)" t)
-(autoload '+chgrp-this-file "../elisp/+unix" "\
-Execute Unix command `chgrp'.  Current buffer's file is default arg.
-CMD is the command to execute (interactively, `chgrp').
-
-(fn CMD)" t)
-(autoload '+chown-this-file "../elisp/+unix" "\
-Execute Unix command `chown'.  Current buffer's file is default arg.
-CMD is the command to execute (interactively, `chown').
-
-(fn CMD)" t)
-(register-definition-prefixes "../elisp/+unix" '("+read-shell-file-command"))
 
 
 ;;; Generated autoloads from ../elisp/ecryptfs.el

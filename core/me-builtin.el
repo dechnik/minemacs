@@ -495,6 +495,7 @@
 
 (use-package nxml-mode
   :straight (:type built-in)
+  :mode "\\.xmpi\\'"
   :config
   (+eglot-register '(nxml-mode xml-mode) "lemminx"))
 
@@ -1420,7 +1421,6 @@
 
 (use-package desktop
   :straight (:type built-in)
-  :hook (minemacs-after-startup . desktop-save-mode)
   :custom
   ;; File name to use when saving desktop
   (desktop-base-file-name "emacs-session.el")
